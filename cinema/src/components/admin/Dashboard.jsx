@@ -8,6 +8,7 @@ import { faPlus, faList, faFilm, faVideo, faTicketAlt, faBinoculars } from '@for
 import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
+import TopMovies from '../user/TopMovies';
 import NewCinema from './CinemaActions/NewCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
@@ -29,6 +30,9 @@ class Dashboard extends Component {
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Movies</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/TopMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>Top Movies</NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Movie</NavLink>
@@ -63,6 +67,7 @@ class Dashboard extends Component {
                 </Col>
                 <Col className="pt-2 app-content-main">
                     <Switch>
+                        <PrivateRouteAdmin path="/dashboard/TopMovies" component={TopMovies} />
                         <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
