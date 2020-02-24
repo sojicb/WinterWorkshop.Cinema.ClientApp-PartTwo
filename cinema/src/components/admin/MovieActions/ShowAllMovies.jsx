@@ -3,16 +3,16 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { Row, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
+import Switch from "react-switch";
 
 class ShowAllMovies extends Component {
     constructor(props) {
       super(props);
-      this.state = {
-          movies: [],
-          isLoading: true
-      };
+      this.state = { checked: false };
+      this.handleChange = this.handleChange.bind(this);
+      this.state = { movies: [], isLoading: true };
       this.editMovie = this.editMovie.bind(this);
       this.removeMovie = this.removeMovie.bind(this);
     }
@@ -20,6 +20,10 @@ class ShowAllMovies extends Component {
     componentDidMount() {
       this.getProjections();
     }
+
+    handleChange(checked) {
+        this.setState({ checked });
+      }
 
     getProjections() {
       const requestOptions = {
@@ -75,6 +79,34 @@ class ShowAllMovies extends Component {
             });
     }
 
+    isCurrent(id, title)
+    {
+        const requestOptions = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/movies/change/${id}`, requestOptions)
+        .then(response => {
+            if(!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.statusText;
+        })
+        .then(result => {
+             NotificationManager.success('Successfuly toggled movie!', title);
+             const newState = this.state.movies.filter(movie => {
+                 return movie.id === id;
+             })
+             this.setState({movies : newState});
+            })
+        .catch(response => {
+            NotificationManager.error(response.message || response.statusText);
+            this.setState({ submitted: false });
+        });    
+    }
+
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
             return <tr key={movie.id}>
@@ -82,7 +114,7 @@ class ShowAllMovies extends Component {
                         <td>{movie.title}</td>
                         <td>{movie.year}</td>
                         <td>{Math.round(movie.rating)}/10</td>
-                        <td>{movie.current ? 'Yes' : 'No'}</td>
+                        <td>{<Switch onChange={() => this.isCurrent(movie.id)} checked={movie.current === true} />}</td>
                         <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
@@ -103,7 +135,7 @@ class ShowAllMovies extends Component {
                                 <th>Title</th>
                                 <th>Year</th>
                                 <th>Rating</th>
-                                <th>Is Current</th>
+                                <th>Current</th>
                                 <th></th>
                                 <th></th>
                             </tr>
