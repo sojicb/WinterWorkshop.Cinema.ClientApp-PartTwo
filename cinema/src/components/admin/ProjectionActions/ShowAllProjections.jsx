@@ -72,6 +72,7 @@ class ShowAllProjections extends Component {
         if(cinema[0]){
             this.setState({cinemaId: cinema[0].id});
             this.validate('cinemaId', cinema[0]);
+            this.filteringProjections();
         } else {
             this.validate('cinemaId', null);
         }
@@ -104,16 +105,11 @@ class ShowAllProjections extends Component {
     }
 
     filteringProjections() {
-            const { cinemaId} = this.state;
-    
-            const data = {
-                cinemaId: cinemaId
-            };
+           
         const requestOptions = {
           method: 'GET',
           headers: {'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
-          body: JSON.stringify(data)
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
         };
   
         this.setState({isLoading: true});
