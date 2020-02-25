@@ -79,7 +79,7 @@ class ShowAllMovies extends Component {
             });
     }
 
-    isCurrent(id, title)
+    isCurrent(id)
     {
         const requestOptions = {
             method: 'PUT',
@@ -95,10 +95,11 @@ class ShowAllMovies extends Component {
             return response.statusText;
         })
         .then(result => {
-             NotificationManager.success('Successfuly toggled movie!', title);
+             NotificationManager.success('Successfuly toggled movie!');
              const newState = this.state.movies.filter(movie => {
                  return movie.id === id;
              })
+             newState[0].current = false;
              this.setState({movies : newState});
             })
         .catch(response => {
@@ -114,7 +115,7 @@ class ShowAllMovies extends Component {
                         <td>{movie.title}</td>
                         <td>{movie.year}</td>
                         <td>{Math.round(movie.rating)}/10</td>
-                        <td>{<Switch onChange={() => this.isCurrent(movie.id)} checked={movie.current === true} />}</td>
+                        <td>{<Switch onChange={() => this.isCurrent(movie.id)} checked={movie.current === true } onColor = '#00FFFF' offColor = '#8B0000' uncheckedIcon = {movie.current === false} />}</td>
                         <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
