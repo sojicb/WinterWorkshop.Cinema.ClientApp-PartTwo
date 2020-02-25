@@ -48,7 +48,30 @@ class ShowAllCinemas extends Component {
     }
 
     removeCinema(id) {
-        // to be implemented
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+    
+        fetch(`${serviceConfig.baseURL}/api/cinemas/${id}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.statusText;
+            })
+            .then(result => {
+                NotificationManager.success('Successfuly removed auditorium with id:', id);
+                const newState = this.state.auditoriums.filter(cinema => {
+                    return cinema.id !== id;
+                })
+                this.setState({cinemas: newState});
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     fillTableWithDaata() {
@@ -64,7 +87,7 @@ class ShowAllCinemas extends Component {
 
     editCinema(id) {
         // to be implemented
-        this.props.history.push(`editcinema/${id}`);
+        this.props.history.push(`editCinema/${id}`);
     }
 
     render() {

@@ -4,13 +4,13 @@ import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from '
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 
-class EditAuditorium extends React.Component {
+class EditCinema extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             name: '',
             id: '',
-            auditoriumId: '',
+            cinemaId: '',
             nameError: '',
             submitted: false,
             canSubmit: true
@@ -21,7 +21,7 @@ class EditAuditorium extends React.Component {
 
     componentDidMount() {
         const { id } = this.props.match.params; 
-        this.getAuditorium(id);
+        this.getCinema(id);
     }
 
     handleChange(e) {
@@ -33,7 +33,7 @@ class EditAuditorium extends React.Component {
     validate(id, value) {
         if (id === 'name') {
             if (value === '') {
-                this.setState({nameError: 'Fill in Auditorium name', 
+                this.setState({nameError: 'Fill in Cinema name', 
                                 canSubmit: false});
             } else {
                 this.setState({nameError: '',
@@ -48,22 +48,22 @@ class EditAuditorium extends React.Component {
         this.setState({ submitted: true });
         const { name } = this.state;
         if (name) {
-            this.updateAuditorium();
+            this.updateCinema();
         } else {
-            NotificationManager.error('Please fill in name of the auditorium');
+            NotificationManager.error('Please fill in name of cinema');
             this.setState({ submitted: false });
         }
     }
 
 
-    getAuditorium(auditoriumId) {
+    getCinema(cinemaId) {
     const requestOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json',
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/api/auditoriums/` + auditoriumId, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/cinemas/` + cinemaId, requestOptions)
         .then(response => {
         if (!response.ok) {
             return Promise.reject(response);
@@ -82,7 +82,7 @@ class EditAuditorium extends React.Component {
         });
     }
 
-    updateAuditorium() {
+    updateCinema() {
         const { name, id } = this.state;
 
         const data = {
@@ -96,7 +96,7 @@ class EditAuditorium extends React.Component {
             body: JSON.stringify(data)
         };
 
-        fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/cinemas/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -105,7 +105,7 @@ class EditAuditorium extends React.Component {
             })
             .then(result => {
                 this.props.history.goBack();
-                NotificationManager.success('Successfuly edited auditorium!');
+                NotificationManager.success('Successfuly edited cinema!');
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
@@ -119,19 +119,19 @@ class EditAuditorium extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Edit Existing Auditorium</h1>
+                        <h1 className="form-header">Edit Existing Cinema</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
                                     id="name"
                                     type="text"
-                                    placeholder="Auditorium Name"
+                                    placeholder="Cinema Name"
                                     value={name}
                                     onChange={this.handleChange}
                                 />
                                 <FormText className="text-danger">{nameError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Auditorium</Button>
+                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Cinema</Button>
                         </form>
                     </Col>
                 </Row>
@@ -140,4 +140,4 @@ class EditAuditorium extends React.Component {
     }
 }
 
-export default withRouter(EditAuditorium);
+export default withRouter(EditCinema);
