@@ -1,24 +1,80 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
-import { Row, Table } from 'react-bootstrap';
+import { Row, Table, Container, FormGroup, FormControl, Button, Col, FormText} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
+import {Typeahead} from 'react-bootstrap-typeahead';
+
 
 class ShowAllProjections extends Component {
     constructor(props) {
       super(props);
       this.state = {
         projections: [],
-        isLoading: true
+        cinemaId: 0,
+        cinemas: [],
+        cinemaIdError: '',
+        isLoading: true,
+        submitted: false,
+        canSubmit: true
       };
       this.editProjection = this.editProjection.bind(this);
       this.removeProjection = this.removeProjection.bind(this);
+      this.getProjections = this.getProjections.bind(this);
     }
 
     componentDidMount() {
       this.getProjections();
+      this.getCinemas();
+     this.filteringProjections();
+    }
+
+    validate(id, value) {
+        if (id === 'cinemaId') {
+            if (!value) {
+                this.setState({cinemaIdError: 'Please chose cineam from dropdown',
+                                canSubmit: false})
+            } else {
+                this.setState({cinemaIdError: '',
+                                canSubmit: true});
+            }
+        }
+    }
+
+    getCinemas() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        fetch(`${serviceConfig.baseURL}/api/Cinemas/all`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ cinemas: data });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ submitted: false });
+          });
+      }
+
+      onCinemaChange(cinema) {
+        if(cinema[0]){
+            this.setState({cinemaId: cinema[0].id});
+            this.validate('cinemaId', cinema[0]);
+        } else {
+            this.validate('cinemaId', null);
+        }
     }
 
     getProjections() {
@@ -47,6 +103,39 @@ class ShowAllProjections extends Component {
         });
     }
 
+    filteringProjections() {
+            const { cinemaId} = this.state;
+    
+            const data = {
+                cinemaId: cinemaId
+            };
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+          body: JSON.stringify(data)
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/Projections/filter`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ projections: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              this.setState({isLoading: false});
+              NotificationManager.error(response.message || response.statusText);
+          });
+      }
+      
+
     removeProjection(id) {
         // to be implemented
     }
@@ -71,7 +160,7 @@ class ShowAllProjections extends Component {
     }
 
     render() {
-        const {isLoading} = this.state;
+        const {isLoading, cinemas, cinemaIdError} = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
@@ -91,6 +180,24 @@ class ShowAllProjections extends Component {
                         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
+            <div>
+            <Container>
+                <Row>
+                    <Col>
+                    <h1 className = "form-header">Filters for Projections</h1>
+                    <FormGroup>
+                    <Typeahead
+                                labelKey="name"
+                                options={cinemas}
+                                placeholder="Chose a cinema"
+                                id="browser"
+                                onChange={e => {this.onCinemaChange(e)}}
+                                />
+                    <FormText className="text-danger">{cinemaIdError}</FormText>
+                    </FormGroup>
+                    </Col>
+                </Row>
+            </Container>
             <React.Fragment>
                 <Row className="no-gutters pt-2">
                     <h1 className="form-header ml-2">All Projections</h1>
@@ -99,6 +206,7 @@ class ShowAllProjections extends Component {
                     {showTable}
                 </Row>
             </React.Fragment>
+            </div>
         );
       }
 }
