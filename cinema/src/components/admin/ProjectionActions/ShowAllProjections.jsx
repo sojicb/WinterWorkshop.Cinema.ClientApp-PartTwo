@@ -54,7 +54,7 @@ class ShowAllProjections extends Component {
                   'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/api/projections/${id}`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/projections/delete/${id}`, requestOptions)
         .then(response => {
             if (!response.ok) {
                 return Promise.reject(response);
