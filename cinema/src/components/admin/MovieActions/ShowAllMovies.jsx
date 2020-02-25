@@ -111,7 +111,7 @@ class ShowAllMovies extends Component {
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
             return <tr key={movie.id}>
-                        <td>{movie.id}</td>
+                        
                         <td>{movie.title}</td>
                         <td>{movie.year}</td>
                         <td>{Math.round(movie.rating)}/10</td>
@@ -121,6 +121,9 @@ class ShowAllMovies extends Component {
                     </tr>
         })
     }
+
+    //<td>{movie.id}</td>
+    //<th>Id</th>
 
     editMovie(id) {
         this.props.history.push(`editmovie/${id}`);
@@ -132,7 +135,7 @@ class ShowAllMovies extends Component {
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
                             <tr>
-                                <th>Id</th>
+                                
                                 <th>Title</th>
                                 <th>Year</th>
                                 <th>Rating</th>
