@@ -66,7 +66,7 @@ class ShowAllProjections extends Component {
             const newState = this.state.projections.filter(projection => {
                 return projection.id !== id;
             })
-            this.setState({projection: newState});
+            this.setState({projections: newState});
         })
         .catch(response => {
             NotificationManager.error(response.message || response.statusText);

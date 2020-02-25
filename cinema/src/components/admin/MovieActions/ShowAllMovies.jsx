@@ -59,7 +59,7 @@ class ShowAllMovies extends Component {
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
         };
 
-        fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/movies/delete/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
