@@ -63,7 +63,7 @@ class EditAuditorium extends React.Component {
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/api/auditoriums/` + auditoriumId, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/auditoriums/get/${auditoriumId}`, requestOptions)
         .then(response => {
         if (!response.ok) {
             return Promise.reject(response);
@@ -72,8 +72,9 @@ class EditAuditorium extends React.Component {
         })
         .then(data => {
             if (data) {
-                this.setState({name: data.name,
-                               id: data.id});
+                this.setState({
+                    id: data.id,
+                    name: data.name});
             }
         })
         .catch(response => {
@@ -83,7 +84,7 @@ class EditAuditorium extends React.Component {
     }
 
     updateAuditorium() {
-        const { name, id } = this.state;
+        const { id, name} = this.state;
 
         const data = {
             Name: name

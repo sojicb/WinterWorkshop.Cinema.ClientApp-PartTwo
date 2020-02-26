@@ -85,7 +85,7 @@ class ShowAllAuditoriums extends Component {
 
     editAuditorium(id) {
         // to be implemented
-        this.props.history.push(`editAuditoriums/${id}`);
+        this.props.history.push(`editAuditorium/${id}`);
     }
 
     render() {
