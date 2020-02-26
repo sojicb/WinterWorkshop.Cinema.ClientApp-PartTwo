@@ -7,12 +7,43 @@ class ProjectionDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        title: '',
+        rating: '',
+        yearOfProduction: '',
+        timeOfProjection: '',
         movies: []
     };
   }
 
   componentDidMount() {
-    //this.getMovie();
+    this.getMovie();
+  }
+
+  getMovie(){
+    const requestOptions = {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    this.setState({isLoading: true});
+    fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+      }
+      return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({ movies: data, isLoading: false });
+          }
+      })
+      .catch(response => {
+          this.setState({isLoading: false});
+          NotificationManager.error(response.message || response.statusText);
+          this.setState({ submitted: false });
+      });
   }
 
   getProjection() {
@@ -21,7 +52,7 @@ class ProjectionDetails extends Component {
       method: 'GET'
     };
 
-    fetch(`${serviceConfig.baseURL}/movies/261e3562-5f7b-418f-61a6-08d797a6bf42`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/movies`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -30,7 +61,7 @@ class ProjectionDetails extends Component {
       })
       .then(data => {
           if (data) {
-              // this.setState({ posts: data });
+               this.setState({ posts: data });
           }
       })
       .catch(response => {

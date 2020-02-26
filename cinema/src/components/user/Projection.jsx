@@ -19,7 +19,7 @@ class Projection extends Component {
   }
 
   navigateToProjectionDetails() {
-    this.props.history.push('projectiondetails/1')
+    this.props.history.push('projectiondetails/getMovie')
   }
 
   getProjections() {

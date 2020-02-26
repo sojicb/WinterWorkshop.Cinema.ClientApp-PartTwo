@@ -13,7 +13,7 @@ class AllProjectionsForCinema extends Component {
     }
 
     componentDidMount() {
-      // this.getProjections();
+       this.getProjections();
     }
 
     getProjections() {
