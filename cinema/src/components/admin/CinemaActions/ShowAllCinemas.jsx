@@ -62,8 +62,8 @@ class ShowAllCinemas extends Component {
                 return response.statusText;
             })
             .then(result => {
-                NotificationManager.success('Successfuly removed auditorium with id:', id);
-                const newState = this.state.auditoriums.filter(cinema => {
+                NotificationManager.success('Successfuly removed cinema with id:', id);
+                const newState = this.state.cinemas.filter(cinema => {
                     return cinema.id !== id;
                 })
                 this.setState({cinemas: newState});
