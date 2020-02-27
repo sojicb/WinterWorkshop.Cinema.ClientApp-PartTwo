@@ -13,7 +13,7 @@ class ShowAllProjections extends Component {
       super(props);
       this.state = {
         projections: [],
-        cinemaId: 0,
+        cinemaId: '',
         cinemas: [],
         cinemaIdError: '',
         isLoading: true,
@@ -104,7 +104,7 @@ class ShowAllProjections extends Component {
         });
     }
 
-    filteringProjections() {
+    filteringProjections(cinemaId) {
            
         const requestOptions = {
           method: 'GET',
@@ -113,7 +113,7 @@ class ShowAllProjections extends Component {
         };
   
         this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/Projections/filter`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/projections/filtering/${cinemaId}`, requestOptions)
           .then(response => {
             if (!response.ok) {
               return Promise.reject(response);
