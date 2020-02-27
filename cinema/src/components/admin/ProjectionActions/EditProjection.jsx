@@ -69,8 +69,8 @@ class EditProjection extends React.Component {
         e.preventDefault();
 
         this.setState({ submitted: true });
-        const { title, auditoriumId, projectionTime } = this.state;
-        if (title && auditoriumId && projectionTime) {
+        const { auditoriumId, projectionTime } = this.state;
+        if (auditoriumId && projectionTime) {
             this.updateProjection();
         } else {
             NotificationManager.error('Please fill in data');
@@ -85,7 +85,7 @@ class EditProjection extends React.Component {
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/api/projections/` + id, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/projections/get/${id}`, requestOptions)
         .then(response => {
         if (!response.ok) {
             return Promise.reject(response);
@@ -94,8 +94,7 @@ class EditProjection extends React.Component {
         })
         .then(data => {
             if (data) {
-                this.setState({title: data.title, 
-                               auditoriumId: data.auditoriumId, 
+                this.setState({auditoriumId: data.auditoriumId, 
                                projectionTime: data.projectionTime,
                                id: data.id});
             }
@@ -107,12 +106,11 @@ class EditProjection extends React.Component {
     }
 
     updateProjection() {
-        const { title, auditoriumId, projectionTime, id } = this.state;
+        const { auditoriumId, projectionTime, id } = this.state;
 
         const data = {
-            Title: title,
-            auditoriumId: auditoriumId,
-            projectionTime: projectionTime
+            AuditoriumId: auditoriumId,
+            ProjectionTime: projectionTime
         };
 
         const requestOptions = {
@@ -140,23 +138,13 @@ class EditProjection extends React.Component {
     }
 
     render() {
-        const { title, auditoriumId, projectionTime, submitted, titleError, canSubmit } = this.state;
+        const { auditoriumId, projectionTime, submitted, titleError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
                     <Col>
                         <h1 className="form-header">Edit Existing Projection</h1>
                         <form onSubmit={this.handleSubmit}>
-                            <FormGroup>
-                                <FormControl
-                                    id="title"
-                                    type="text"
-                                    placeholder="Movie Title"
-                                    value={title}
-                                    onChange={this.handleChange}
-                                />
-                                <FormText className="text-danger">{titleError}</FormText>
-                            </FormGroup>
                             <FormGroup>
                                 <FormControl 
                                 as="select" 

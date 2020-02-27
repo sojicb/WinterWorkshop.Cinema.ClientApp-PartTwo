@@ -63,7 +63,7 @@ class EditCinema extends React.Component {
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/api/cinemas/` + cinemaId, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/cinemas/get/${cinemaId}` , requestOptions)
         .then(response => {
         if (!response.ok) {
             return Promise.reject(response);
