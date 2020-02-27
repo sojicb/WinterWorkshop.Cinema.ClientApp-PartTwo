@@ -3,7 +3,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { Row, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import Switch from "react-switch";
 
@@ -59,7 +59,7 @@ class ShowAllMovies extends Component {
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
         };
 
-        fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/movies/delete/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);

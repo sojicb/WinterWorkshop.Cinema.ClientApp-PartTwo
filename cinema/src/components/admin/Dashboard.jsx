@@ -9,10 +9,13 @@ import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
 import TopMovies from '../user/TopMovies';
+import EditCinema from './CinemaActions/EditCinema';
 import NewCinema from './CinemaActions/NewCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
+import EditAuditorium from './AuditoriumActions/EditAuditorium';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
+import EditProjection from './ProjectionActions/EditProjection';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
 
@@ -71,10 +74,13 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
+                        <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
                         <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
+                        <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
+                        <PrivateRouteAdmin path="/dashboard/EditProjection/:id" component={EditProjection} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
                     </Switch>
