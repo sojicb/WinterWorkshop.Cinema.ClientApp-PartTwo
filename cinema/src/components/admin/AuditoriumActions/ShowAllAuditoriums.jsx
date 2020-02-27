@@ -9,10 +9,7 @@ import Spinner from '../../Spinner';
 class ShowAllAuditoriums extends Component {
     constructor(props) {
       super(props);
-      this.state = {
-        auditoriums: [],
-        isLoading: true
-      };
+      this.state = { auditoriums: [], isLoading: true };
       this.editAuditorium = this.editAuditorium.bind(this);
       this.removeAuditorium = this.removeAuditorium.bind(this);
     }
@@ -48,7 +45,30 @@ class ShowAllAuditoriums extends Component {
     }
 
     removeAuditorium(id) {
-        // to be implemented
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.statusText;
+        })
+        .then(result => {
+            NotificationManager.success('Successfuly removed auditorium with id:', id);
+            const newState = this.state.auditoriums.filter(auditorium => {
+                return auditorium.id !== id;
+            })
+            this.setState({auditoriums: newState});
+        })
+        .catch(response => {
+            NotificationManager.error(response.message || response.statusText);
+            this.setState({ submitted: false });
+        });
     }
 
     fillTableWithDaata() {

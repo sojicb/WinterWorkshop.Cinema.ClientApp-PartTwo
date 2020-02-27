@@ -133,7 +133,30 @@ class ShowAllProjections extends Component {
       
 
     removeProjection(id) {
-        // to be implemented
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/projections/delete/${id}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.statusText;
+        })
+        .then(result => {
+            NotificationManager.success('Successfuly removed projection with id:', id);
+            const newState = this.state.projections.filter(projection => {
+                return projection.id !== id;
+            })
+            this.setState({projections: newState});
+        })
+        .catch(response => {
+            NotificationManager.error(response.message || response.statusText);
+            this.setState({ submitted: false });
+        });
     }
 
     fillTableWithDaata() {
