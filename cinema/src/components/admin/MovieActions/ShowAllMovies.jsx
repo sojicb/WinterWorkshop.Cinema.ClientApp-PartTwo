@@ -59,7 +59,7 @@ class ShowAllMovies extends Component {
       };
 
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Movies/all`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -162,36 +162,37 @@ class ShowAllMovies extends Component {
     //  fetch(`${serviceConfig.baseURL}/api/Tags/get/${tag}`, requestOptions)
     //  fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
 
-    filteringTags() {
-        //if(!tag) { return;}
+     filteringTags() {
         const { tag } = this.state;
+		
+		if(!tag) {
+			return;
+		}
+		
         const requestOptions = {
           method: 'GET',
           headers: {'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
         };
-  
-        this.setState({isLoading: true});
-        if (tag !== '') {
-      fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
-      .then(response => {
-        this.forceUpdate();
-            if (!response.ok) {
-              return Promise.reject(response);
-          }
-          return response.json();
-          })
-          .then(data => {
-            if (data) {
-              this.setState({ tags: data, isLoading: false });
-              if(!tag) { return; }
-              }
-          })
-          .catch(response => {
-              this.setState({isLoading: false});
-              NotificationManager.error(response.message || response.statusText);
-          });
-        }
+   
+		this.setState({isLoading: true});
+		fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
+			.then(response => {
+			this.forceUpdate();
+				if (!response.ok) {
+				  return Promise.reject(response);
+			  }
+			  return response.json();
+			  })
+			  .then(data => {
+				if (data) {
+				  this.setState({ movies: data, isLoading: false });
+				  }
+			  })
+			  .catch(response => {
+				  this.setState({isLoading: false});
+				  NotificationManager.error(response.message || response.statusText);
+			  });
      }
 
 

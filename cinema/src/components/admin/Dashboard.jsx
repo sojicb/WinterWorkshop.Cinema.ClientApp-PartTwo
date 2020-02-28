@@ -8,6 +8,7 @@ import { faPlus, faList, faFilm, faVideo, faTicketAlt, faBinoculars } from '@for
 import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
+import CurrentMovies from './MovieActions/CurrentMovies';
 import TopMovies from '../user/TopMovies';
 import EditCinema from './CinemaActions/EditCinema';
 import NewCinema from './CinemaActions/NewCinema';
@@ -33,6 +34,9 @@ class Dashboard extends Component {
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Movies</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/CurrentMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>Current Movies</NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/TopMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>Top Movies</NavLink>
@@ -73,6 +77,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/TopMovies" component={TopMovies} />
                         <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
+                        <PrivateRouteAdmin path="/dashboard/CurrentMovies" component={CurrentMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
                         <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
