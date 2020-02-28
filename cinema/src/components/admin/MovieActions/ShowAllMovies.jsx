@@ -159,8 +159,12 @@ class ShowAllMovies extends Component {
               NotificationManager.error(response.message || response.statusText);
           });
     }
+    //  fetch(`${serviceConfig.baseURL}/api/Tags/get/${tag}`, requestOptions)
+    //  fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
 
-    filteringTags(id) {
+    filteringTags() {
+        //if(!tag) { return;}
+        const { tag } = this.state;
         const requestOptions = {
           method: 'GET',
           headers: {'Content-Type': 'application/json',
@@ -168,8 +172,9 @@ class ShowAllMovies extends Component {
         };
   
         this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/Tags/get/${id}`, requestOptions)
-          .then(response => {
+        if (tag !== '') {
+      fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
+    .then(response => {
             if (!response.ok) {
               return Promise.reject(response);
           }
@@ -178,22 +183,28 @@ class ShowAllMovies extends Component {
           .then(data => {
             if (data) {
               this.setState({ tags: data, isLoading: false });
+              if(!tag) { return; }
               }
           })
           .catch(response => {
               this.setState({isLoading: false});
               NotificationManager.error(response.message || response.statusText);
           });
+        }
      }
 
 
-    onTagChange(tag, value) {
+    onTagChange(tag) {
+        console.log(tag)
         if(tag[0]){
-            this.setState({value: tag[0].id});
-            this.validate('value', tag[0]);
-            this.filteringTags(value);
+            console.log('CHOSEN ID: ', tag[0].id);
+            this.setState({tag: tag[0].id});
+            console.log(this.state);
+            this.validate('tag', tag[0]);
+            this.filteringTags();
         } else {
-            this.validate('value', null);
+            this.validate('tag', null);
+            this.setState({tag: null});
         }
     }
 
@@ -220,7 +231,7 @@ class ShowAllMovies extends Component {
     render() {
         const {tags, tagIdError, isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="dark">
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
                             <thead>
                             <tr>                                
                                 <th>Title</th>
