@@ -174,7 +174,8 @@ class ShowAllMovies extends Component {
         this.setState({isLoading: true});
         if (tag !== '') {
       fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
-    .then(response => {
+      .then(response => {
+        this.forceUpdate();
             if (!response.ok) {
               return Promise.reject(response);
           }
@@ -198,8 +199,8 @@ class ShowAllMovies extends Component {
         console.log(tag)
         if(tag[0]){
             console.log('CHOSEN ID: ', tag[0].id);
-            this.setState({tag: tag[0].id});
-            console.log(this.state);
+            //this.setState({tag: tag[0].id});
+            this.state['tag'] = tag[0].id;
             this.validate('tag', tag[0]);
             this.filteringTags();
         } else {
