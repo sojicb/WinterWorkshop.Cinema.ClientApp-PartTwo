@@ -62,6 +62,8 @@ login() {
         return (
             <Navbar bg="dark" expand="sm">
             <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/projectionlist'>Cinema 9</Link></Navbar.Brand>
+            <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard'>Dashboard</Link></Navbar.Brand>
+            <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard/topmovies'>Top Movies</Link></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" className="text-white" />
             <Navbar.Collapse id="basic-navbar-nav" className="text-white">
               <Nav className="mr-auto text-white" >

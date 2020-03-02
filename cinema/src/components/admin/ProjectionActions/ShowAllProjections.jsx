@@ -14,6 +14,7 @@ class ShowAllProjections extends Component {
       this.state = {
         projections: [],
         cinemaId: '',
+        cinema: '',
         cinemas: [],
         cinemaIdError: '',
         isLoading: true,
@@ -23,18 +24,24 @@ class ShowAllProjections extends Component {
       this.editProjection = this.editProjection.bind(this);
       this.removeProjection = this.removeProjection.bind(this);
       this.getProjections = this.getProjections.bind(this);
+      this.filteringProjections = this.filteringProjections.bind(this);
     }
 
     componentDidMount() {
       this.getProjections();
       this.getCinemas();
-     this.filteringProjections();
+      this.filteringProjections();
     }
+
+    handleChange(checked) {
+        this.setState({ checked });
+      }
+
 
     validate(id, value) {
         if (id === 'cinemaId') {
             if (!value) {
-                this.setState({cinemaIdError: 'Please chose cineam from dropdown',
+                this.setState({cinemaIdError: 'Please chose cinema from dropdown',
                                 canSubmit: false})
             } else {
                 this.setState({cinemaIdError: '',
@@ -67,17 +74,7 @@ class ShowAllProjections extends Component {
               this.setState({ submitted: false });
           });
       }
-
-      onCinemaChange(cinema) {
-        if(cinema[0]){
-            this.setState({cinemaId: cinema[0].id});
-            this.validate('cinemaId', cinema[0]);
-            this.filteringProjections();
-        } else {
-            this.validate('cinemaId', null);
-        }
-    }
-
+     
     getProjections() {
       const requestOptions = {
         method: 'GET',
@@ -104,8 +101,13 @@ class ShowAllProjections extends Component {
         });
     }
 
-    filteringProjections(cinemaId) {
-           
+    filteringProjections() {
+        const { cinemaId } = this.state;
+		
+		if(!cinemaId) {
+			return;
+		}  
+
         const requestOptions = {
           method: 'GET',
           headers: {'Content-Type': 'application/json',
@@ -113,8 +115,9 @@ class ShowAllProjections extends Component {
         };
   
         this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/projections/filtering/${cinemaId}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}`, requestOptions)
           .then(response => {
+            this.forceUpdate();
             if (!response.ok) {
               return Promise.reject(response);
           }
@@ -130,6 +133,21 @@ class ShowAllProjections extends Component {
               NotificationManager.error(response.message || response.statusText);
           });
       }
+
+      onCinemaChange(cinema) {
+        console.log(cinema)
+        if(cinema[0]){
+            console.log('CHOSEN ID: ', cinema[0].id);
+            //this.setState({cinemaId: cinema[0].id});
+            this.state['cinema'] = cinema[0].id;
+            console.log('Cinema: ', cinema[0]);
+            this.validate('cinemaId', cinema[0]);
+            this.filteringProjections();
+        } else {
+            this.validate('cinemaId', null);
+            this.setState({cinemaId: null});
+        }
+    }
       
 
     removeProjection(id) {
