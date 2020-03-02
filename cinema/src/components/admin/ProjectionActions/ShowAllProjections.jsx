@@ -17,6 +17,14 @@ class ShowAllProjections extends Component {
         cinema: '',
         cinemas: [],
         cinemaIdError: '',
+        auditoriumId: '',
+        auditorium: '',
+        auditoriums: [],
+        auditoriumIdError: '',
+        movieId: '',
+        movie: '',
+        movies: [],
+        movieIdError: '',
         isLoading: true,
         submitted: false,
         canSubmit: true
@@ -24,13 +32,24 @@ class ShowAllProjections extends Component {
       this.editProjection = this.editProjection.bind(this);
       this.removeProjection = this.removeProjection.bind(this);
       this.getProjections = this.getProjections.bind(this);
-      this.filteringProjections = this.filteringProjections.bind(this);
+      this.getAuditoriums = this.getAuditoriums.bind(this);
+      this.getMovies = this.getMovies.bind(this);
+      this.filteringProjectionsByCinema = this.filteringProjectionsByCinema.bind(this);
+      this.filteringProjectionsByAudit = this.filteringProjectionsByAudit.bind(this);
+      this.filteringProjectionsByMovie = this.filteringProjectionsByMovie.bind(this);
+      this.filteringProjectionsByOption = this.filteringProjectionsByOption.bind(this);
+
+      this.getAuditoriumsByCinemas = this.getAuditoriumsByCinemas.bind(this);
     }
 
     componentDidMount() {
       this.getProjections();
       this.getCinemas();
-      this.filteringProjections();
+      //this.getAuditoriums();
+      //this.getMovies();
+      //this.filteringProjectionsByCinema();
+      //this.filteringProjectionsByAudit();
+      //this.filteringProjectionsByMovie();
     }
 
     handleChange(checked) {
@@ -45,6 +64,24 @@ class ShowAllProjections extends Component {
                                 canSubmit: false})
             } else {
                 this.setState({cinemaIdError: '',
+                                canSubmit: true});
+            }
+        }
+        if (id === 'auditoriumId') {
+            if (!value) {
+                this.setState({auditoriumIdError: 'Please chose auditorium from dropdown',
+                                canSubmit: false})
+            } else {
+                this.setState({auditoriumIdError: '',
+                                canSubmit: true});
+            }
+        }
+        if (id === 'movieId') {
+            if (!value) {
+                this.setState({movieIdError: 'Please chose movie from dropdown',
+                                canSubmit: false})
+            } else {
+                this.setState({movieIdError: '',
                                 canSubmit: true});
             }
         }
@@ -101,7 +138,96 @@ class ShowAllProjections extends Component {
         });
     }
 
-    filteringProjections() {
+    getAuditoriums() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ auditoriums: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ isLoading: false });
+          });
+      }
+
+    getMovies() {
+      const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+      };
+
+      this.setState({isLoading: true});
+      fetch(`${serviceConfig.baseURL}/api/Movies/all`, requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            return Promise.reject(response);
+        }
+        return response.json();
+        })
+        .then(data => {
+          if (data) {
+            this.setState({ movies: data, isLoading: false });
+            }
+        })
+        .catch(response => {
+            this.setState({isLoading: false});
+            NotificationManager.error(response.message || response.statusText);
+            this.setState({ submitted: false });
+        });
+    }
+
+    getAuditoriumsByCinemas() {
+
+        let {cinemaId} = this.state;
+
+        if(!cinemaId) {
+			return;
+		}  
+
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/filter/${cinemaId}`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+                console.log(data);
+                
+              this.setState({ auditoriums: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ isLoading: false });
+          });
+      }
+
+    filteringProjectionsByCinema() {
         const { cinemaId } = this.state;
 		
 		if(!cinemaId) {
@@ -134,18 +260,163 @@ class ShowAllProjections extends Component {
           });
       }
 
-      onCinemaChange(cinema) {
-        console.log(cinema)
+    filteringProjectionsByAudit() {
+        const { cinemaId, auditoriumId } = this.state;
+		
+		if(!cinemaId && !auditoriumId) {
+			return;
+		}  
+
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}`, requestOptions)
+          .then(response => {
+            this.forceUpdate();
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ auditoriums: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              this.setState({isLoading: false});
+              NotificationManager.error(response.message || response.statusText);
+          });
+      }
+
+    filteringProjectionsByMovie() {
+        const { cinemaId, auditoriumId, movieId } = this.state;
+		
+		if(!cinemaId && !auditoriumId && !movieId) {
+			return;
+		}  
+
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}`, requestOptions)
+          .then(response => {
+            this.forceUpdate();
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ movies: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              this.setState({isLoading: false});
+              NotificationManager.error(response.message || response.statusText);
+          });
+      }
+    
+     filteringProjectionsByOption(option) {
+        const { cinemaId, auditoriumId, movieId } = this.state;
+		
+		let url = "";
+		
+		switch(option) {
+			case 1:
+				url = `/api/projections/filtering/?cinemaId=${cinemaId}`
+				break;
+			case 2:
+				url = `/api/projections/filtering/?auditoriumId=${auditoriumId}`
+				break;
+			case 3:
+                url = `/api/projections/filtering/?movieId=${movieId}`
+				break;
+			default:
+				url = `/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}`;
+				break;
+		}
+		
+		if(!cinemaId && !auditoriumId && !movieId) {
+			return;
+		}  
+
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}` + url, requestOptions)
+          .then(response => {
+            this.forceUpdate();
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ projections: data, isLoading: false });
+              }
+          })
+          .then(() => {
+            this.getAuditoriumsByCinemas();
+
+          })
+          .catch(response => {
+              this.setState({isLoading: false});
+              NotificationManager.error(response.message || response.statusText);
+          });
+      }
+
+    onCinemaChange(cinema) {
         if(cinema[0]){
-            console.log('CHOSEN ID: ', cinema[0].id);
-            //this.setState({cinemaId: cinema[0].id});
-            this.state['cinema'] = cinema[0].id;
-            console.log('Cinema: ', cinema[0]);
+            this.state['cinemaId'] = cinema[0].id;
             this.validate('cinemaId', cinema[0]);
-            this.filteringProjections();
+            this.filteringProjectionsByOption();
+            this.forceUpdate();
         } else {
             this.validate('cinemaId', null);
             this.setState({cinemaId: null});
+        }
+    }
+
+    onAuditChange(auditorium) {
+        console.log(auditorium)
+        if(auditorium[0]){
+            this.state['auditoriumId'] = auditorium[0].id;
+            this.validate('auditoriumId', auditorium[0]);
+            this.filteringProjectionsByOption();
+            this.forceUpdate();
+        } else {
+            this.validate('auditoriumId', null);
+            this.setState({auditoriumId: null});
+        }
+    }
+
+    onMovieChange(movie) {
+        console.log(movie)
+        if(movie[0]){
+            console.log('CHOSEN ID: ', movie[0].id);
+            this.state['movieId'] = movie[0].id;
+            console.log('movie: ', movie[0]);
+            this.validate('movieId', movie[0]);
+            this.filteringProjectionsByMovie();
+            this.forceUpdate();
+        } else {
+            this.validate('movieId', null);
+            this.setState({movieId: null});
         }
     }
       
@@ -197,7 +468,7 @@ class ShowAllProjections extends Component {
     }
 
     render() {
-        const {isLoading, cinemas, cinemaIdError} = this.state;
+        const {isLoading, cinemas, cinemaIdError, auditoriums, auditoriumIdError, movies, movieIdError} = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
@@ -231,6 +502,38 @@ class ShowAllProjections extends Component {
                                 onChange={e => {this.onCinemaChange(e)}}
                                 />
                     <FormText className="text-danger">{cinemaIdError}</FormText>
+                    </FormGroup>
+                    </Col>
+                </Row>
+            </Container>
+            <Container>
+                <Row>
+                    <Col>
+                    <FormGroup>
+                    <Typeahead
+                                labelKey="name"
+                                options={auditoriums}
+                                placeholder="Chose a auditorium"
+                                id="browser"
+                                onChange={e => {this.onAuditChange(e)}}
+                                />
+                    <FormText className="text-danger">{auditoriumIdError}</FormText>
+                    </FormGroup>
+                    </Col>
+                </Row>
+            </Container>
+            <Container>
+                <Row>
+                    <Col>
+                    <FormGroup>
+                    <Typeahead
+                                labelKey="name"
+                                options={movies}
+                                placeholder="Chose a movie"
+                                id="browser"
+                                onChange={e => {this.onMovieChange(e)}}
+                                />
+                    <FormText className="text-danger">{movieIdError}</FormText>
                     </FormGroup>
                     </Col>
                 </Row>
