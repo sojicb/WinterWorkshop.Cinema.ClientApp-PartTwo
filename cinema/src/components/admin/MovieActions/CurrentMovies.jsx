@@ -25,14 +25,14 @@ class CurrentMovies extends Component {
       this.handleChange = this.handleChange.bind(this);
       this.editMovie = this.editMovie.bind(this);
       this.removeMovie = this.removeMovie.bind(this);
-      this.getTags = this.getTags.bind(this);
-      this.filteringTags = this.filteringTags.bind(this);
+      //this.getTags = this.getTags.bind(this);
+      //this.filteringTags = this.filteringTags.bind(this);
     }
 
     componentDidMount() {
       this.getProjections();
       this.getTags();
-      this.filteringTags();
+      //this.filteringTags();
     }
 
     handleChange(checked) {
@@ -159,10 +159,7 @@ class CurrentMovies extends Component {
               NotificationManager.error(response.message || response.statusText);
           });
     }
-    //  fetch(`${serviceConfig.baseURL}/api/Tags/get/${tag}`, requestOptions)
-    //  fetch(`${serviceConfig.baseURL}/api/Movies/tag/${tag}`, requestOptions)
-
-     filteringTags() {
+     /*filteringTags() {
         const { tag } = this.state;
 		
 		if(!tag) {
@@ -208,7 +205,7 @@ class CurrentMovies extends Component {
             this.validate('tag', null);
             this.setState({tag: null});
         }
-    }
+    }*/
 
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
@@ -251,7 +248,22 @@ class CurrentMovies extends Component {
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
             <div>
-               <Container>
+            <React.Fragment>
+                <Row className="no-gutters pt-2">
+                    <h1 className="form-header ml-2">Current Movies</h1>
+                </Row>
+                <Row className="no-gutters pr-5 pl-5">
+                    {showTable}
+                </Row>
+            </React.Fragment>
+            </div>
+        );
+      }
+}
+
+export default CurrentMovies;
+
+/* <Container>
                 <Row>
                     <Col>
                     <h1 className = "form-header">Tags for Movies</h1>
@@ -267,18 +279,4 @@ class CurrentMovies extends Component {
                     </FormGroup>
                     </Col>
                 </Row>
-            </Container>
-            <React.Fragment>
-                <Row className="no-gutters pt-2">
-                    <h1 className="form-header ml-2">Current Movies</h1>
-                </Row>
-                <Row className="no-gutters pr-5 pl-5">
-                    {showTable}
-                </Row>
-            </React.Fragment>
-            </div>
-        );
-      }
-}
-
-export default CurrentMovies;
+            </Container>*/
