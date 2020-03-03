@@ -6,21 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import {Typeahead} from 'react-bootstrap-typeahead';
-import DateTimeRangeContainer from 'react-advanced-datetimerange-picker';
-import moment from "moment";
+import DateTimePicker from 'react-datetime-picker';
 
 
 class ShowAllProjections extends Component {
     constructor(props) {
       super(props);
-      let now = new Date();
-      let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
-      let end = moment(start).add(1, "days").subtract(1, "seconds");
       this.state = {
-        start : start,
-        end : end,
-        dateFrom: '',
-        dateTo:'',
+        dateFrom: new Date(),
+        dateTo: new Date(),
         projections: [],
         projectionTimeError: '',
         cinemaId: '',
@@ -41,16 +35,18 @@ class ShowAllProjections extends Component {
       };
       this.editProjection = this.editProjection.bind(this);
       this.removeProjection = this.removeProjection.bind(this);
+      
       this.getProjections = this.getProjections.bind(this);
       this.getAuditoriums = this.getAuditoriums.bind(this);
       this.getMovies = this.getMovies.bind(this);
+
       this.filteringProjectionsByOption = this.filteringProjectionsByOption.bind(this);
+
 
       this.getAuditoriumsByCinemas = this.getAuditoriumsByCinemas.bind(this);
       this.getMoviesByAuditoriums = this.getMoviesByAuditoriums.bind(this);
 
-      this.applyCallback = this.applyCallback.bind(this);
-      this.filteringDateTimeSpan = this.applyCallback.bind(this);
+      this.onDateChange = this.onDateChange.bind(this);
     }
 
     componentDidMount() {
@@ -288,7 +284,16 @@ class ShowAllProjections extends Component {
 				break;
 			case 3:
          url = `/api/projections/filtering/?movieId=${movieId}`
-				break;
+        break;
+      case 4:
+        url = `/api/projections/filtering/?cinemaId=${cinemaId}&dateFrom=${this.state.start}&dateTo=${this.state.end}`
+        break;
+      case 5:
+        url = `/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&dateFrom=${this.state.start}&dateTo=${this.state.end}`
+        break;
+      case 6:
+        url = `/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}&dateFrom=${this.state.start}&dateTo=${this.state.end}`
+        break;
 			default:
 				url = `/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}`;
 				break;
@@ -333,9 +338,9 @@ class ShowAllProjections extends Component {
     filteringDateTimeSpan() {
       const { dateFrom, dateTo } = this.state;
   
-      if(!dateFrom && !dateTo) {
-        return;
-      };  
+      // if(!dateFrom && !dateTo) {
+      //   return;
+      // };  
 
       const requestOptions = {
         method: 'GET',
@@ -344,7 +349,7 @@ class ShowAllProjections extends Component {
       };
 
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/projections/filtering/?dateFrom=${dateFrom}&dateTo=${dateTo}`, 
+      fetch(`${serviceConfig.baseURL}/api/projections/filtering/?dateFrom=${this.state.start}&dateTo=${this.state.end}`, 
       requestOptions)
         .then(response => {
           this.forceUpdate();
@@ -355,7 +360,8 @@ class ShowAllProjections extends Component {
         })
         .then(data => {
           if (data) {
-            this.setState({ datesFrom: dateFrom, datesTo: dateTo, isLoading: false });
+            this.setState({ datesFrom: dateFrom, datesTo: dateTo, isLoading: false, projections: data });
+            this.forceUpdate();
             }
         })
         .catch(response => {
@@ -401,30 +407,30 @@ class ShowAllProjections extends Component {
             this.setState({movieId: null});
         }
     }
-    
-    /*onDateChange(date) {
-      console.log(date)
-      if(date[0]){
-          this.state['dateId'] = date[0].id;
-          this.validate('dateId', date[0]);
+
+  onDateChange(dateFrom, dateTo){
+    /*this.setState({
+            start: dateFrom,
+            end : dateTo
+        })*/
+        console.log(dateFrom)
+        console.log(dateTo)
+
+        if (dateFrom) {
+          this.state['start'] = dateFrom.toISOString();
+        }
+
+        if (dateTo) {
+          this.state['end'] = dateTo.toISOString();
+        }
+
+        if(dateTo && dateFrom)
+        {
           this.filteringDateTimeSpan();
-          this.forceUpdate();
-      } else {
-          this.validate('date', null);
-          this.setState({date: null});
-      }
-  }*/
-    applyCallback(dateFrom, dateTo){
-      console.log(dateFrom)
-      console.log(dateTo)
-      this.setState({
-              start: dateFrom,
-              end : dateTo
-          })
-      //this.state['start'] = dateFrom; 
-      //this.state['end'] = dateTo;
-      this.filteringDateTimeSpan();
-    }
+
+        }
+
+}
 
     removeProjection(id) {
       const requestOptions = {
@@ -473,20 +479,6 @@ class ShowAllProjections extends Component {
     }
 
     render() {
-      let now = new Date();
-            let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
-            let end = moment(start).add(1, "days").subtract(1, "seconds");
-            let ranges = {
-                "Today Only": [moment(start), moment(end)],
-                "Yesterday Only": [moment(start).subtract(1, "days"), moment(end).subtract(1, "days")],
-                "3 Days": [moment(start).subtract(3, "days"), moment(end)]
-            }
-            let local = {
-                "format":"DD-MM-YYYY HH:mm",
-                "sundayFirst" : false
-            }
-            let maxDate = moment(start).add(79, "year");
-        const selectionRange = {startDate: new Date(), endDate: new Date(), key: 'selection'};
         const {isLoading, cinemas, cinemaIdError, auditoriums, auditoriumIdError, movies, movieIdError, projectionTimeError } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
@@ -543,22 +535,18 @@ class ShowAllProjections extends Component {
                     <FormText className="text-danger">{movieIdError}</FormText>
                     </FormGroup>
                     <FormGroup>
-            <DateTimeRangeContainer 
-                        ranges={ranges}
-                        start={this.state.start}
-                        end={this.state.end}
-                        local={local}
-                        maxDate={maxDate}
-                        applyCallback={this.applyCallback}
-                        onChange={e => {this.applyCallback(e)}}
-                    >    
-                        <FormControl
-                        id="formControlsTextB"
-                        type="text"
-                        label="Text"
-                        placeholder="Choose a date"
-                        /> 
-                    </DateTimeRangeContainer>
+                    <DateTimePicker
+                                    className="form-control"
+                                    onChange={e => this.onDateChange(new Date(e))}
+                                    value={this.state.dateFrom}
+                                    
+                                    />
+                    <DateTimePicker
+                                    className="form-control"
+                                    onChange={e => this.onDateChange(new Date(this.state.start), new Date(e))}
+                                    value={this.state.dateTo}
+                                    
+                                    />
                 <FormText className="text-danger">{projectionTimeError}</FormText>
                 </FormGroup>
                 </Col>
@@ -579,3 +567,8 @@ class ShowAllProjections extends Component {
 }
 
 export default ShowAllProjections;
+
+
+
+//onChange={e => {this.onDateChange(dateFrom)}}
+//onChange={e => {this.onDateChange(dateTo)}}
