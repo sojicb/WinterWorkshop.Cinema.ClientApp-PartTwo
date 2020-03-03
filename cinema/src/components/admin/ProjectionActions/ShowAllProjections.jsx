@@ -6,13 +6,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import {Typeahead} from 'react-bootstrap-typeahead';
+import DateTimeRangeContainer from 'react-advanced-datetimerange-picker';
+import moment from "moment";
 
 
 class ShowAllProjections extends Component {
     constructor(props) {
       super(props);
+      let now = new Date();
+      let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
+      let end = moment(start).add(1, "days").subtract(1, "seconds");
       this.state = {
+        start : start,
+        end : end,
+        dateFrom: '',
+        dateTo:'',
         projections: [],
+        projectionTimeError: '',
         cinemaId: '',
         cinema: '',
         cinemas: [],
@@ -34,12 +44,13 @@ class ShowAllProjections extends Component {
       this.getProjections = this.getProjections.bind(this);
       this.getAuditoriums = this.getAuditoriums.bind(this);
       this.getMovies = this.getMovies.bind(this);
-      this.filteringProjectionsByCinema = this.filteringProjectionsByCinema.bind(this);
-      this.filteringProjectionsByAudit = this.filteringProjectionsByAudit.bind(this);
-      this.filteringProjectionsByMovie = this.filteringProjectionsByMovie.bind(this);
       this.filteringProjectionsByOption = this.filteringProjectionsByOption.bind(this);
 
       this.getAuditoriumsByCinemas = this.getAuditoriumsByCinemas.bind(this);
+      this.getMoviesByAuditoriums = this.getMoviesByAuditoriums.bind(this);
+
+      this.applyCallback = this.applyCallback.bind(this);
+      this.filteringDateTimeSpan = this.applyCallback.bind(this);
     }
 
     componentDidMount() {
@@ -54,7 +65,7 @@ class ShowAllProjections extends Component {
 
     handleChange(checked) {
         this.setState({ checked });
-      }
+    }
 
 
     validate(id, value) {
@@ -110,7 +121,7 @@ class ShowAllProjections extends Component {
               NotificationManager.error(response.message || response.statusText);
               this.setState({ submitted: false });
           });
-      }
+    }
      
     getProjections() {
       const requestOptions = {
@@ -162,7 +173,7 @@ class ShowAllProjections extends Component {
               NotificationManager.error(response.message || response.statusText);
               this.setState({ isLoading: false });
           });
-      }
+    }
 
     getMovies() {
       const requestOptions = {
@@ -225,12 +236,13 @@ class ShowAllProjections extends Component {
               NotificationManager.error(response.message || response.statusText);
               this.setState({ isLoading: false });
           });
-      }
+    }
 
-    filteringProjectionsByCinema() {
-        const { cinemaId } = this.state;
-		
-		if(!cinemaId) {
+    getMoviesByAuditoriums() {
+
+        let {auditoriumId} = this.state;
+
+        if(!auditoriumId) {
 			return;
 		}  
 
@@ -241,9 +253,9 @@ class ShowAllProjections extends Component {
         };
   
         this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}`, requestOptions)
+        
+        fetch(`${serviceConfig.baseURL}/api/Movies/filterMovies/${auditoriumId}`, requestOptions)
           .then(response => {
-            this.forceUpdate();
             if (!response.ok) {
               return Promise.reject(response);
           }
@@ -251,82 +263,18 @@ class ShowAllProjections extends Component {
           })
           .then(data => {
             if (data) {
-              this.setState({ projections: data, isLoading: false });
-              }
-          })
-          .catch(response => {
-              this.setState({isLoading: false});
-              NotificationManager.error(response.message || response.statusText);
-          });
-      }
-
-    filteringProjectionsByAudit() {
-        const { cinemaId, auditoriumId } = this.state;
-		
-		if(!cinemaId && !auditoriumId) {
-			return;
-		}  
-
-        const requestOptions = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-        };
-  
-        this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}`, requestOptions)
-          .then(response => {
-            this.forceUpdate();
-            if (!response.ok) {
-              return Promise.reject(response);
-          }
-          return response.json();
-          })
-          .then(data => {
-            if (data) {
-              this.setState({ auditoriums: data, isLoading: false });
-              }
-          })
-          .catch(response => {
-              this.setState({isLoading: false});
-              NotificationManager.error(response.message || response.statusText);
-          });
-      }
-
-    filteringProjectionsByMovie() {
-        const { cinemaId, auditoriumId, movieId } = this.state;
-		
-		if(!cinemaId && !auditoriumId && !movieId) {
-			return;
-		}  
-
-        const requestOptions = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-        };
-  
-        this.setState({isLoading: true});
-        fetch(`${serviceConfig.baseURL}/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}`, requestOptions)
-          .then(response => {
-            this.forceUpdate();
-            if (!response.ok) {
-              return Promise.reject(response);
-          }
-          return response.json();
-          })
-          .then(data => {
-            if (data) {
+                console.log(data);
+                
               this.setState({ movies: data, isLoading: false });
               }
           })
           .catch(response => {
-              this.setState({isLoading: false});
               NotificationManager.error(response.message || response.statusText);
+              this.setState({ isLoading: false });
           });
-      }
+    }
     
-     filteringProjectionsByOption(option) {
+    filteringProjectionsByOption(option) {
         const { cinemaId, auditoriumId, movieId } = this.state;
 		
 		let url = "";
@@ -339,7 +287,7 @@ class ShowAllProjections extends Component {
 				url = `/api/projections/filtering/?auditoriumId=${auditoriumId}`
 				break;
 			case 3:
-                url = `/api/projections/filtering/?movieId=${movieId}`
+         url = `/api/projections/filtering/?movieId=${movieId}`
 				break;
 			default:
 				url = `/api/projections/filtering/?cinemaId=${cinemaId}&auditoriumId=${auditoriumId}&movieId=${movieId}`;
@@ -372,13 +320,49 @@ class ShowAllProjections extends Component {
           })
           .then(() => {
             this.getAuditoriumsByCinemas();
-
+          })
+          .then(() => {
+            this.getMoviesByAuditoriums();
           })
           .catch(response => {
               this.setState({isLoading: false});
               NotificationManager.error(response.message || response.statusText);
           });
-      }
+    }
+
+    filteringDateTimeSpan() {
+      const { dateFrom, dateTo } = this.state;
+  
+      if(!dateFrom && !dateTo) {
+        return;
+      };  
+
+      const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+      };
+
+      this.setState({isLoading: true});
+      fetch(`${serviceConfig.baseURL}/api/projections/filtering/?dateFrom=${dateFrom}&dateTo=${dateTo}`, 
+      requestOptions)
+        .then(response => {
+          this.forceUpdate();
+          if (!response.ok) {
+            return Promise.reject(response);
+        }
+        return response.json();
+        })
+        .then(data => {
+          if (data) {
+            this.setState({ datesFrom: dateFrom, datesTo: dateTo, isLoading: false });
+            }
+        })
+        .catch(response => {
+            this.setState({isLoading: false});
+            NotificationManager.error(response.message || response.statusText);
+        });
+    }
 
     onCinemaChange(cinema) {
         if(cinema[0]){
@@ -408,18 +392,39 @@ class ShowAllProjections extends Component {
     onMovieChange(movie) {
         console.log(movie)
         if(movie[0]){
-            console.log('CHOSEN ID: ', movie[0].id);
             this.state['movieId'] = movie[0].id;
-            console.log('movie: ', movie[0]);
             this.validate('movieId', movie[0]);
-            this.filteringProjectionsByMovie();
+            this.filteringProjectionsByOption();
             this.forceUpdate();
         } else {
             this.validate('movieId', null);
             this.setState({movieId: null});
         }
     }
-      
+    
+    /*onDateChange(date) {
+      console.log(date)
+      if(date[0]){
+          this.state['dateId'] = date[0].id;
+          this.validate('dateId', date[0]);
+          this.filteringDateTimeSpan();
+          this.forceUpdate();
+      } else {
+          this.validate('date', null);
+          this.setState({date: null});
+      }
+  }*/
+    applyCallback(dateFrom, dateTo){
+      console.log(dateFrom)
+      console.log(dateTo)
+      this.setState({
+              start: dateFrom,
+              end : dateTo
+          })
+      //this.state['start'] = dateFrom; 
+      //this.state['end'] = dateTo;
+      this.filteringDateTimeSpan();
+    }
 
     removeProjection(id) {
       const requestOptions = {
@@ -468,7 +473,21 @@ class ShowAllProjections extends Component {
     }
 
     render() {
-        const {isLoading, cinemas, cinemaIdError, auditoriums, auditoriumIdError, movies, movieIdError} = this.state;
+      let now = new Date();
+            let start = moment(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0,0));
+            let end = moment(start).add(1, "days").subtract(1, "seconds");
+            let ranges = {
+                "Today Only": [moment(start), moment(end)],
+                "Yesterday Only": [moment(start).subtract(1, "days"), moment(end).subtract(1, "days")],
+                "3 Days": [moment(start).subtract(3, "days"), moment(end)]
+            }
+            let local = {
+                "format":"DD-MM-YYYY HH:mm",
+                "sundayFirst" : false
+            }
+            let maxDate = moment(start).add(79, "year");
+        const selectionRange = {startDate: new Date(), endDate: new Date(), key: 'selection'};
+        const {isLoading, cinemas, cinemaIdError, auditoriums, auditoriumIdError, movies, movieIdError, projectionTimeError } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
@@ -497,47 +516,55 @@ class ShowAllProjections extends Component {
                     <Typeahead
                                 labelKey="name"
                                 options={cinemas}
-                                placeholder="Chose a cinema"
+                                placeholder="Choose a cinema"
                                 id="browser"
                                 onChange={e => {this.onCinemaChange(e)}}
                                 />
                     <FormText className="text-danger">{cinemaIdError}</FormText>
                     </FormGroup>
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-                    <Col>
                     <FormGroup>
                     <Typeahead
                                 labelKey="name"
                                 options={auditoriums}
-                                placeholder="Chose a auditorium"
+                                placeholder="Choose a auditorium"
                                 id="browser"
                                 onChange={e => {this.onAuditChange(e)}}
                                 />
                     <FormText className="text-danger">{auditoriumIdError}</FormText>
                     </FormGroup>
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-                    <Col>
                     <FormGroup>
                     <Typeahead
-                                labelKey="name"
+                                labelKey="title"
                                 options={movies}
-                                placeholder="Chose a movie"
+                                placeholder="Choose a movie"
                                 id="browser"
                                 onChange={e => {this.onMovieChange(e)}}
                                 />
                     <FormText className="text-danger">{movieIdError}</FormText>
                     </FormGroup>
-                    </Col>
+                    <FormGroup>
+            <DateTimeRangeContainer 
+                        ranges={ranges}
+                        start={this.state.start}
+                        end={this.state.end}
+                        local={local}
+                        maxDate={maxDate}
+                        applyCallback={this.applyCallback}
+                        onChange={e => {this.applyCallback(e)}}
+                    >    
+                        <FormControl
+                        id="formControlsTextB"
+                        type="text"
+                        label="Text"
+                        placeholder="Choose a date"
+                        /> 
+                    </DateTimeRangeContainer>
+                <FormText className="text-danger">{projectionTimeError}</FormText>
+                </FormGroup>
+                </Col>
                 </Row>
             </Container>
+
             <React.Fragment>
                 <Row className="no-gutters pt-2">
                     <h1 className="form-header ml-2">All Projections</h1>
@@ -548,7 +575,7 @@ class ShowAllProjections extends Component {
             </React.Fragment>
             </div>
         );
-      }
+    }
 }
 
 export default ShowAllProjections;
