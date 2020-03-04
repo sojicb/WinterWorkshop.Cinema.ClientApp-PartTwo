@@ -129,7 +129,7 @@ class CurrentMovies extends Component {
              this.setState({movies : newState});
             })
         .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
+            NotificationManager.error("This movie has projections in the future");
             this.setState({ submitted: false });
         });    
     }
