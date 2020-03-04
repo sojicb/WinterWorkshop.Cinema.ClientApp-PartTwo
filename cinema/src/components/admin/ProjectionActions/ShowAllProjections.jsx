@@ -15,6 +15,8 @@ class ShowAllProjections extends Component {
       this.state = {
         dateFrom: new Date(),
         dateTo: new Date(),
+        displayDateFrom: '',
+        displayDateTo: '',
         projections: [],
         projectionTimeError: '',
         cinemaId: '',
@@ -408,29 +410,33 @@ class ShowAllProjections extends Component {
         }
     }
 
-  onDateChange(dateFrom, dateTo){
-    /*this.setState({
-            start: dateFrom,
-            end : dateTo
-        })*/
-        console.log(dateFrom)
-        console.log(dateTo)
-
-        if (dateFrom) {
-          this.state['start'] = dateFrom.toISOString();
-        }
-
-        if (dateTo) {
-          this.state['end'] = dateTo.toISOString();
-        }
-
-        if(dateTo && dateFrom)
-        {
-          this.filteringDateTimeSpan();
-
-        }
-
-}
+    onDateChange(dateFrom, dateTo){
+      /*this.setState({
+              start: dateFrom,
+              end : dateTo
+          })*/
+          console.log(dateFrom)
+          console.log(dateTo)
+  
+          if (dateFrom) {
+              const date = new Date(dateFrom);
+            this.state['start'] = dateFrom.toISOString();
+            this.state['displayDateFrom'] = dateFrom;
+          }
+  
+          if (dateTo) {
+              const date = new Date(dateTo);
+            this.state['end'] = dateTo.toISOString();
+            this.state['displayDateTo'] = dateTo;
+          }
+  
+          if(dateTo && dateFrom)
+          {
+            this.filteringDateTimeSpan();
+  
+          }
+  
+  }
 
     removeProjection(id) {
       const requestOptions = {
@@ -537,14 +543,14 @@ class ShowAllProjections extends Component {
                     <FormGroup>
                     <DateTimePicker
                                     className="form-control"
-                                    onChange={e => this.onDateChange(new Date(e))}
-                                    value={this.state.dateFrom}
+                                    onChange={e => this.onDateChange(e)}
+                                    value={this.state.displayDateFrom}
                                     
                                     />
                     <DateTimePicker
                                     className="form-control"
-                                    onChange={e => this.onDateChange(new Date(this.state.start), new Date(e))}
-                                    value={this.state.dateTo}
+                                    onChange={e => this.onDateChange(new Date(this.state.start), e)}
+                                    value={this.state.displayDateTo}
                                     
                                     />
                 <FormText className="text-danger">{projectionTimeError}</FormText>
