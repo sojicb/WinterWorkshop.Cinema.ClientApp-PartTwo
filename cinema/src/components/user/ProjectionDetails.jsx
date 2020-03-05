@@ -49,10 +49,12 @@ class ProjectionDetails extends Component {
   getProjection() {
     // TO DO: here you need to fetch movie with projection details using ID from router
     const requestOptions = {
-      method: 'GET'
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
-
-    fetch(`${serviceConfig.baseURL}/movies`, requestOptions)
+    this.setState({isLoading: true});
+    fetch(`${serviceConfig.baseURL}/api/movies`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -61,7 +63,7 @@ class ProjectionDetails extends Component {
       })
       .then(data => {
           if (data) {
-               this.setState({ posts: data });
+               this.setState({ movie: data, isLoading: false });
           }
       })
       .catch(response => {

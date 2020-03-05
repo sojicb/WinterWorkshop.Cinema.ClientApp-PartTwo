@@ -3,8 +3,9 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import Projection from './Projection';
 import { withRouter } from 'react-router-dom';
-import { Container, Table, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
+import Switch from "react-switch";
 
 
 
@@ -23,7 +24,7 @@ class AllProjectionsForCinema extends Component {
           canSubmit: true
 
       };
-      this.getProjections = this.getProjections.bind(this);
+      //this.getProjections = this.getProjections.bind(this);
       this.getProjectionsById = this.getProjectionsById.bind(this);
 
 
@@ -42,7 +43,7 @@ class AllProjectionsForCinema extends Component {
       };
   
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/futureProjections`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -105,43 +106,43 @@ class AllProjectionsForCinema extends Component {
     }
 
     fillTableWithDaata() {
-        return this.state.movies.map(movie => {
-            return <tr key={movie.id}>                        
-                        <td>{movie.title}</td>
-                        <td>{movie.year}</td>
-                        <td>{Math.round(movie.rating)}/10</td>
-                    </tr>
-        })
-    }
+      return this.state.movies.map(movie => {
+          return <tr key={movie.id}>                        
+                      <td>{movie.title}</td>
+                      <td>{movie.year}</td>
+                      <td>{Math.round(movie.rating)}</td>
+                     </tr>
+      })
+  }
 
     render() {
-      const {title, projectionTimes, movies, isLoading} = this.state; 
+      
+      const {tags, tagIdError, isLoading} = this.state;
+        const rowsData = this.fillTableWithDaata();
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
+                            <thead>
+                            <tr>                                
+                                <th>Title</th>
+                                <th>Year</th>
+                                <th>Rating</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {rowsData}
+                            </tbody>
+                        </Table>);
+        const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
-          <div className="no-gutters">
-            <Container>
-          <Row className="justify-content-center">
-            <Col>
-              <Card className="mt-5 card-width">
-                <Card.Body>
-                <Card.Title>
-                   <span className="card-title-font">{movies.title}</span> {movies.rating}</Card.Title>
-                    <hr/>
-                    <Card.Subtitle className="mb-2 text-muted">Year of production: 2012</Card.Subtitle>
-                    <hr/>
-                    <Card.Text>
-                        <span className="mb-2 font-weight-bold">
-                          Projection times: 
-                        </span>
-                    </Card.Text>
-                        {projectionTimes}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-          </div>
+          <React.Fragment>
+                <Row className="no-gutters pt-2">
+                    <h1 className="form-header ml-2">All Movies</h1>
+                </Row>
+                <Row className="no-gutters pr-5 pl-5">
+                    {showTable}
+                </Row>
+            </React.Fragment>
         );
       }
 }
 
-export default AllProjectionsForCinema;
+export default withRouter(AllProjectionsForCinema);
