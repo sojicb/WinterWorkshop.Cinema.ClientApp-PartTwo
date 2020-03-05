@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import Projection from './Projection';
 import { withRouter } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Table } from 'react-bootstrap';
+import { Row, Card, Button, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
-import Switch from "react-switch";
-
 
 
 
@@ -15,16 +12,10 @@ class AllProjectionsForCinema extends Component {
       super(props);
       this.state = {
           movies: [],
-          movie: '', 
-          title: '',
-          rating: '',
-          projectionTimes: '',
-          isLoading: true,
-          submitted: false,
-          canSubmit: true
-
+          movie: '',
+          isLoading: false
       };
-      //this.getProjections = this.getProjections.bind(this);
+      this.getProjections = this.getProjections.bind(this);
       this.getProjectionsById = this.getProjectionsById.bind(this);
 
 
@@ -43,7 +34,7 @@ class AllProjectionsForCinema extends Component {
       };
   
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Movies/futureProjections`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -63,6 +54,7 @@ class AllProjectionsForCinema extends Component {
     }
 
     getProjectionsById(id) {
+      
       if(!id) {
         return;
       }
@@ -89,16 +81,6 @@ class AllProjectionsForCinema extends Component {
             NotificationManager.error(response.message || response.statusText);
             this.setState({ submitted: false });
         });
-  
-      const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
-      return projectionTimes.map((time, index) => {
-        return <Button key={index} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{time}</Button>
-      })
-    }
-    
-    getRoundedRating(rating) {
-        const result = Math.round(rating);
-        return <span className="float-right">Rating: {result}/10</span>
     }
   
     navigateToProjectionDetails() {
@@ -107,11 +89,25 @@ class AllProjectionsForCinema extends Component {
 
     fillTableWithDaata() {
       return this.state.movies.map(movie => {
-          return <tr key={movie.id}>                        
-                      <td>{movie.title}</td>
-                      <td>{movie.year}</td>
-                      <td>{Math.round(movie.rating)}</td>
-                     </tr>
+          return <tr> 
+        <Card className="mt-5 card-width">
+            <Card.Body>
+               <Card.Title>
+                 <span className="card-title-font"><td>{movie.title}</td></span> <span><img className="img-responsive" src="https://some-random-api.ml/img/dog" alt="logo" /></span></Card.Title>
+                  <hr/>
+                    <Card.Subtitle className="mb-2 text-muted">IMDb Rating: <td>{Math.round(movie.rating)}/10</td></Card.Subtitle>
+                      <hr/>
+                    <Card.Subtitle className="mb-2 text-muted">Year of production: <td>{movie.year}</td></Card.Subtitle>
+                      <hr/>
+                    <Card.Text>
+                      <span className="mb-2 font-weight-bold">
+                            Projection times: 
+                      </span>
+                 </Card.Text>
+        <Button key={movie.projectionTimes} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{movie.projectionTimes}</Button>
+            </Card.Body>
+         </Card>
+    </tr>
       })
   }
 
@@ -121,21 +117,16 @@ class AllProjectionsForCinema extends Component {
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
                             <thead>
-                            <tr>                                
-                                <th>Title</th>
-                                <th>Year</th>
-                                <th>Rating</th>
-                            </tr>
                             </thead>
                             <tbody>
-                                {rowsData}
+                            {rowsData}
                             </tbody>
                         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
           <React.Fragment>
                 <Row className="no-gutters pt-2">
-                    <h1 className="form-header ml-2">All Movies</h1>
+                    <h1 className="form-header ml-2">New Movies in our Nine Cinema:</h1>
                 </Row>
                 <Row className="no-gutters pr-5 pl-5">
                     {showTable}
@@ -146,3 +137,9 @@ class AllProjectionsForCinema extends Component {
 }
 
 export default withRouter(AllProjectionsForCinema);
+
+
+/*const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
+      return projectionTimes.map((time, index) => {
+        return <Button key={index} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{time}</Button>
+      })*/
