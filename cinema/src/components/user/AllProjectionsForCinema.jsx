@@ -3,7 +3,9 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import Projection from './Projection';
 import { withRouter } from 'react-router-dom';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Table, Row, Col, Card, Button } from 'react-bootstrap';
+import Spinner from '../Spinner';
+
 
 
 
@@ -13,7 +15,13 @@ class AllProjectionsForCinema extends Component {
       this.state = {
           movies: [],
           movie: '', 
-          title: ''
+          title: '',
+          rating: '',
+          projectionTimes: '',
+          isLoading: true,
+          submitted: false,
+          canSubmit: true
+
       };
       this.getProjections = this.getProjections.bind(this);
       this.getProjectionsById = this.getProjectionsById.bind(this);
@@ -54,20 +62,16 @@ class AllProjectionsForCinema extends Component {
     }
 
     getProjectionsById(id) {
-
-      const { movies} = this.state;
-      
       if(!id) {
         return;
       }
-
       const requestOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json',
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
       };
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/${movies[0].id}`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Movies/${id}`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -96,15 +100,22 @@ class AllProjectionsForCinema extends Component {
         return <span className="float-right">Rating: {result}/10</span>
     }
   
-    /*navigateToProjectionDetails() {
+    navigateToProjectionDetails() {
       this.props.history.push('projectiondetails/getMovie')
-    }*/
-    
+    }
+
+    fillTableWithDaata() {
+        return this.state.movies.map(movie => {
+            return <tr key={movie.id}>                        
+                        <td>{movie.title}</td>
+                        <td>{movie.year}</td>
+                        <td>{Math.round(movie.rating)}/10</td>
+                    </tr>
+        })
+    }
 
     render() {
-      const {title, projectionTimes, movie} = this.state;
-      const rating = this.getRoundedRating(9);
-      console.log(movie);
+      const {title, projectionTimes, movies, isLoading} = this.state; 
         return (
           <div className="no-gutters">
             <Container>
@@ -113,7 +124,7 @@ class AllProjectionsForCinema extends Component {
               <Card className="mt-5 card-width">
                 <Card.Body>
                 <Card.Title>
-                   <span className="card-title-font">{movie.title}</span> {rating}</Card.Title>
+                   <span className="card-title-font">{movies.title}</span> {movies.rating}</Card.Title>
                     <hr/>
                     <Card.Subtitle className="mb-2 text-muted">Year of production: 2012</Card.Subtitle>
                     <hr/>
