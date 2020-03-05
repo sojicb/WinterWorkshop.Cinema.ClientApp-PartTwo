@@ -10,16 +10,21 @@ class ProjectionDetails extends Component {
         title: '',
         rating: '',
         yearOfProduction: '',
-        timeOfProjection: '',
+        timeOfProjection: [],
         movies: []
     };
+
+    this.getProjection = this.getProjection.bind(this);
   }
 
   componentDidMount() {
-    this.getMovie();
+    //this.getMovie();
+    const { id } = this.props.match.params; 
+    this.getProjection(id);
+
   }
 
-  getMovie(){
+  /*getMovie(){
     const requestOptions = {
       method: 'GET',
       headers: {'Content-Type': 'application/json',
@@ -27,7 +32,7 @@ class ProjectionDetails extends Component {
     };
 
     this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/Movies/futureProjections`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -44,9 +49,9 @@ class ProjectionDetails extends Component {
           NotificationManager.error(response.message || response.statusText);
           this.setState({ submitted: false });
       });
-  }
-
-  getProjection() {
+  }*/
+  getProjection(id) {
+    console.log(id);
     // TO DO: here you need to fetch movie with projection details using ID from router
     const requestOptions = {
       method: 'GET',
@@ -54,7 +59,7 @@ class ProjectionDetails extends Component {
                     'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
     this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/movies`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -63,12 +68,12 @@ class ProjectionDetails extends Component {
       })
       .then(data => {
           if (data) {
-               this.setState({ movie: data, isLoading: false });
+          this.setState({ movie: data, isLoading: false });
           }
       })
       .catch(response => {
-          NotificationManager.error(response.message || response.statusText);
           this.setState({ submitted: false });
+          NotificationManager.error(response.message || response.statusText);
       });
   }
   
@@ -90,45 +95,48 @@ class ProjectionDetails extends Component {
       return renderedSeats;
   }
 
+  fillCardWithInformations(movie) {
+      return <Card className="mt-5 card-width">
+      <Card.Body>
+    <Card.Title><span className="card-title-font">{movie}</span> <span className="float-right">Rating: {Math.round(movie)}/10</span></Card.Title>
+          <hr/>
+          <Card.Subtitle className="mb-2 text-muted">Year of production: {movie} <span className="float-right">Time of projection: {movie} </span></Card.Subtitle>
+          <hr/>
+        <Card.Text>
+        <Row className="mt-2">
+          <Col className="justify-content-center align-content-center">
+              <h4>Chose your seat(s)</h4>
+              <div>
+              <Row className="justify-content-center mb-4">
+                  <div className="text-center text-white font-weight-bold cinema-screen">
+                      CINEMA SCREEN
+                  </div>
+              </Row>
+              <Row className="justify-content-center">
+                  <table className="table-cinema-auditorium">
+                  <tbody>
+                  {this.renderRows(5, 26)}
+                  </tbody>
+                  </table>
+              </Row>
+              </div>
+          </Col>
+        </Row>
+        <hr/>
+        </Card.Text>
+        <Row className="justify-content-center font-weight-bold">
+          Price for reserved seats:  800 RSD
+        </Row>
+      </Card.Body>
+    </Card>
+  }
+
   render() {
-    const auditorium = this.renderRows(5, 26);
       return (
         <Container>
           <Row className="justify-content-center">
             <Col>
-              <Card className="mt-5 card-width">
-                <Card.Body>
-                <Card.Title><span className="card-title-font">Star Wars: Last jedi</span> <span className="float-right">Rating: 9/10</span></Card.Title>
-                    <hr/>
-                    <Card.Subtitle className="mb-2 text-muted">Year of production: 2012 <span className="float-right">Time of projection: 18.10.2020 15:25</span></Card.Subtitle>
-                    <hr/>
-                  <Card.Text>
-                  <Row className="mt-2">
-                    <Col className="justify-content-center align-content-center">
-                        <h4>Chose your seat(s)</h4>
-                        <div>
-                        <Row className="justify-content-center mb-4">
-                            <div className="text-center text-white font-weight-bold cinema-screen">
-                                CINEMA SCREEN
-                            </div>
-                        </Row>
-                        <Row className="justify-content-center">
-                            <table className="table-cinema-auditorium">
-                            <tbody>
-                            {auditorium}
-                            </tbody>
-                            </table>
-                        </Row>
-                        </div>
-                    </Col>
-                  </Row>
-                  <hr/>
-                  </Card.Text>
-                  <Row className="justify-content-center font-weight-bold">
-                    Price for reserved seats:  800 RSD
-                  </Row>
-                </Card.Body>
-              </Card>
+              {this.fillCardWithInformations()}
             </Col>
           </Row>
         </Container>

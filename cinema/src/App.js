@@ -22,7 +22,7 @@ function App() {
       <div className="set-overflow-y">
       <Switch>
         <Redirect exact from="/" to="projectionlist" />
-        <Route path="/projectiondetails/:id" component={ProjectionDetails} />
+        <Route path="/projectiondetails/getProjection/:id" component={ProjectionDetails} />
         <Route path="/projectionlist" component={AllProjectionsForCinema} />
         <Route path="/topmovies" component={TopMovies}/> 
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
@@ -34,3 +34,6 @@ function App() {
 }
 
 export default App;
+
+//<Route path="/projectiondetails/:id" component={ProjectionDetails} />
+

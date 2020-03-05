@@ -16,14 +16,14 @@ class AllProjectionsForCinema extends Component {
           isLoading: false
       };
       this.getProjections = this.getProjections.bind(this);
-      this.getProjectionsById = this.getProjectionsById.bind(this);
+      //this.getProjectionsById = this.getProjectionsById.bind(this);
 
 
     }
 
     componentDidMount() {
        this.getProjections();
-       this.getProjectionsById();
+       //this.getProjectionsById();
     }
 
     getProjections() {
@@ -53,7 +53,7 @@ class AllProjectionsForCinema extends Component {
         });
     }
 
-    getProjectionsById(id) {
+    /*getProjectionsById(id) {
       
       if(!id) {
         return;
@@ -81,19 +81,34 @@ class AllProjectionsForCinema extends Component {
             NotificationManager.error(response.message || response.statusText);
             this.setState({ submitted: false });
         });
-    }
+    }*/
   
-    navigateToProjectionDetails() {
-      this.props.history.push('projectiondetails/getMovie')
+    navigateToProjectionDetails(id) {
+      this.props.history.push(`projectiondetails/getProjection/${id}`);
     }
+
+    fillTableWithProjectionsData(projections, movie) { 
+      
+      return projections.map(projection => 
+        {
+         return <Button 
+                key={movie.projections} 
+                onClick={() => this.navigateToProjectionDetails(movie.id)} 
+                className="mr-1 mb-2"
+              >
+                {projection.projectionTime}
+        </Button>
+        });
+      }
 
     fillTableWithDaata() {
       return this.state.movies.map(movie => {
+        console.log(movie);
           return <tr> 
         <Card className="mt-5 card-width">
             <Card.Body>
                <Card.Title>
-                 <span className="card-title-font"><td>{movie.title}</td></span> <span><img className="img-responsive" src="https://some-random-api.ml/img/dog" alt="logo" /></span></Card.Title>
+                 <span className="card-title-font"><td>{movie.title}</td></span> <span><img className="img-responsive" src="https://source.unsplash.com/random" alt="logo" align="right" width="500" height="350" /></span></Card.Title>
                   <hr/>
                     <Card.Subtitle className="mb-2 text-muted">IMDb Rating: <td>{Math.round(movie.rating)}/10</td></Card.Subtitle>
                       <hr/>
@@ -104,7 +119,7 @@ class AllProjectionsForCinema extends Component {
                             Projection times: 
                       </span>
                  </Card.Text>
-        <Button key={movie.projectionTimes} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{movie.projectionTimes}</Button>
+                 {this.fillTableWithProjectionsData(movie.projections, movie)}
             </Card.Body>
          </Card>
     </tr>
@@ -113,7 +128,7 @@ class AllProjectionsForCinema extends Component {
 
     render() {
       
-      const {tags, tagIdError, isLoading} = this.state;
+      const { isLoading } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
                             <thead>
