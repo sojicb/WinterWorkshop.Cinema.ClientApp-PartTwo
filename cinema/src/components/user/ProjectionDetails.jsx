@@ -20,7 +20,7 @@ class ProjectionDetails extends Component {
         auditoriumId: '',
         seats: [],
         numOfRows: [],
-        //numOfSeatsPerRow: []
+        seatsForReservation: []
     };
 
     this.getProjection = this.getProjection.bind(this);
@@ -129,7 +129,13 @@ class ProjectionDetails extends Component {
       });
   }
 
-  fillingRows() {
+  handleReservation(seatId) {
+    const {seatsForReservation} = this.state;
+    seatsForReservation.push(seatId);
+    this.setState({seatsForReservation});
+}
+
+  maxRows() {
     const {seats} = this.state;
     let row;
     for(let i = 0; i < seats.length; i++){
@@ -138,7 +144,7 @@ class ProjectionDetails extends Component {
     return row;
   }
 
-  fillingNumbers() {
+  maxSeatsPerRow() {
     const {seats} = this.state;
     let seat;
     for(let i = 0; i < seats.length; i++){
@@ -147,29 +153,54 @@ class ProjectionDetails extends Component {
     return seat;
   }
   
-  renderRows(rows, seats) {
+  // renderRows(rows, seats) {
+  //   const rowsRendered = [];
+  //   for (let i = 0; i < rows; i++) {
+  //     console.log(seats[i]);
+  //       rowsRendered.push( <tr key={i} >
+  //           {this.renderSeats(seats, i)}
+  //       </tr>);
+  //   }
+  //   return rowsRendered;
+  // }
+
+  // renderSeats(seats, row) {
+  //     let renderedSeats = [];
+  //     for (let i = 0; i < seats; i++) {
+  //       console.log(seats[i]);
+  //         renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
+  //     }
+  //     return renderedSeats;
+  // }
+
+  renderRows(rows, seats, seatsPerRow) {
     const rowsRendered = [];
-    for (let i = 0; i < rows; i++) {
-        rowsRendered.push( <tr key={i} >
-            {this.renderSeats(seats, i)}
-        </tr>);
+    for (let i = 1; i <= rows; i++) {
+    //console.log(i);
+    rowsRendered.push( <tr key={i} >
+    {this.renderSeats(seats, i, seatsPerRow)}
+    </tr>);
     }
     return rowsRendered;
-  }
+    }
 
-  renderSeats(seats, row) {
-      let renderedSeats = [];
-      for (let i = 0; i < seats; i++) {
-          renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
+  renderSeats(seats, row, seatsPerRow) {
+    let renderedSeats = [];
+    for (let i = 0; i < seats.length; i++) {
+      //console.log(row);
+      if(seats[i].row === row){
+        //console.log(seats[i]);
+        renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i} onClick={() => this.handleReservation(seats[i].id)}></td>);
       }
-      return renderedSeats;
-  }
+    }
+    return renderedSeats;
+    }
 
   render() {
-    const { title, auditoriumName, projectionTime, seats } = this.state;
-    const numOfSeatsPerRow = this.fillingNumbers();
-    const rows = this.fillingRows();
-    console.log(numOfSeatsPerRow);
+    const { title, auditoriumName, projectionTime, seats, seatsForReservation } = this.state;
+    const numOfSeatsPerRow = this.maxSeatsPerRow();
+    const rows = this.maxRows();
+    console.log(seatsForReservation);
       return (
         <Container>
           <Row className="justify-content-center">
@@ -193,7 +224,7 @@ class ProjectionDetails extends Component {
               <Row className="justify-content-center">
                   <table className="table-cinema-auditorium">
                   <tbody>
-                  {this.renderRows(rows , numOfSeatsPerRow)}
+                  {this.renderRows(rows , seats, numOfSeatsPerRow)}
                   </tbody>
                   </table>
               </Row>
