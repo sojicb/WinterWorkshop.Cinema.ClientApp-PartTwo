@@ -32,35 +32,6 @@ class ProjectionDetails extends Component {
     //this.getAuditorium();
 
   }
-  /*getProjection(id) {
-    console.log(id);
-    // TO DO: here you need to fetch movie with projection details using ID from router
-    const requestOptions = {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-    this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject(response);
-      }
-      return response.json();
-      })
-      .then(data => {
-          if (data) {
-          this.setState({ id: data.id,
-             title: data.title, 
-             year: data.year, 
-             rating: data.rating, isLoading: false });
-          }
-      })
-      .catch(response => {
-          this.setState({ submitted: false });
-          NotificationManager.error(response.message || response.statusText);
-      });
-  }*/
 
   getProjection(id) {
     console.log(id);
@@ -145,7 +116,7 @@ class ProjectionDetails extends Component {
         {seat.number}
       </li>
     });
-  }
+  } 
   
   renderRows(rows, seats) {
     const rowsRendered = [];
@@ -179,7 +150,7 @@ class ProjectionDetails extends Component {
       <Card.Body>
     <Card.Title><span className="card-title-font">{title}</span> <span className="float-right">Auditorium Name: {auditoriumName}</span></Card.Title>
           <hr/>
-          <Card.Subtitle className="mb-2 text-muted">Projection Time: {projectionTime} </Card.Subtitle>
+          <Card.Subtitle className="mb-2 text-muted">Time of Projection: {projectionTime} </Card.Subtitle>
           <hr/>
         <Card.Text>
         <Row className="mt-2">
@@ -194,7 +165,7 @@ class ProjectionDetails extends Component {
               <Row className="justify-content-center">
                   <table className="table-cinema-auditorium">
                   <tbody>
-                  {this.renderRows(Math.max(seatRows), Math.max(seatNumbers))}
+                  {this.renderRows(seatRows, seatNumbers)}
                   </tbody>
                   </table>
               </Row>
@@ -217,5 +188,3 @@ class ProjectionDetails extends Component {
 }
 
 export default ProjectionDetails;
-
-//Time of projection: {projection} 
