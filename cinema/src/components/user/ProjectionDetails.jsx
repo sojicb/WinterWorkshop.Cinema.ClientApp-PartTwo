@@ -19,8 +19,8 @@ class ProjectionDetails extends Component {
         projectionTime: '',
         auditoriumId: '',
         seats: [],
-        row: [],
-        number: []
+        numOfRows: [],
+        //numOfSeatsPerRow: []
     };
 
     this.getProjection = this.getProjection.bind(this);
@@ -130,27 +130,27 @@ class ProjectionDetails extends Component {
   }
 
   fillingRows() {
-    return this.state.seats.map(seat => {
-      console.log("ROWS!!!!!: " + JSON.stringify((seat.row)))
-      return <li>
-        {seat.row}
-      </li>
-    });
+    const {seats} = this.state;
+    let row;
+    for(let i = 0; i < seats.length; i++){
+       row = Math.max(seats[i].row);
+    }
+    return row;
   }
 
   fillingNumbers() {
-    return this.state.seats.map(seat => {
-      console.log("SEATS!!!!: " + JSON.stringify(Math.max(seat.number)))
-      return <li>
-        {seat.number}
-      </li>
-    });
+    const {seats} = this.state;
+    let seat;
+    for(let i = 0; i < seats.length; i++){
+       seat = Math.max(seats[i].number);
+    }
+    return seat;
   }
   
   renderRows(rows, seats) {
     const rowsRendered = [];
     for (let i = 0; i < rows; i++) {
-        rowsRendered.push( <tr key={i}>
+        rowsRendered.push( <tr key={i} >
             {this.renderSeats(seats, i)}
         </tr>);
     }
@@ -167,10 +167,9 @@ class ProjectionDetails extends Component {
 
   render() {
     const { title, auditoriumName, projectionTime, seats } = this.state;
-    let seatRows = this.fillingRows();
-    let seatNumbers = this.fillingNumbers();
-    console.log("There is numbers of rows: " + seatRows);
-    console.log("There is numbers of seats: " + seatNumbers);
+    const numOfSeatsPerRow = this.fillingNumbers();
+    const rows = this.fillingRows();
+    console.log(numOfSeatsPerRow);
       return (
         <Container>
           <Row className="justify-content-center">
@@ -194,7 +193,7 @@ class ProjectionDetails extends Component {
               <Row className="justify-content-center">
                   <table className="table-cinema-auditorium">
                   <tbody>
-                  {this.renderRows(Math.max(seatRows), Math.max(seatNumbers))}
+                  {this.renderRows(rows , numOfSeatsPerRow)}
                   </tbody>
                   </table>
               </Row>
