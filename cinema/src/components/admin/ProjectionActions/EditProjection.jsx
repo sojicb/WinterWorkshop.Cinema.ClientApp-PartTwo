@@ -120,7 +120,7 @@ class EditProjection extends React.Component {
             body: JSON.stringify(data)
         };
 
-        fetch(`${serviceConfig.baseURL}/api/projections/${id}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/projections/get/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);

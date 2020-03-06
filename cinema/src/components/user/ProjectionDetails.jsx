@@ -131,6 +131,7 @@ class ProjectionDetails extends Component {
 
   fillingRows() {
     return this.state.seats.map(seat => {
+      console.log("ROWS!!!!!: " + JSON.stringify((seat.row)))
       return <li>
         {seat.row}
       </li>
@@ -141,7 +142,7 @@ class ProjectionDetails extends Component {
     return this.state.seats.map(seat => {
       console.log("SEATS!!!!: " + JSON.stringify(Math.max(seat.number)))
       return <li>
-        {(Math.max(seat.number))}
+        {seat.number}
       </li>
     });
   }
@@ -166,8 +167,8 @@ class ProjectionDetails extends Component {
 
   render() {
     const { title, auditoriumName, projectionTime, seats } = this.state;
-    const seatRows = this.fillingRows();
-    const seatNumbers = this.fillingNumbers();
+    let seatRows = this.fillingRows();
+    let seatNumbers = this.fillingNumbers();
     console.log("There is numbers of rows: " + seatRows);
     console.log("There is numbers of seats: " + seatNumbers);
       return (
@@ -193,7 +194,7 @@ class ProjectionDetails extends Component {
               <Row className="justify-content-center">
                   <table className="table-cinema-auditorium">
                   <tbody>
-                  {this.renderRows(seatRows, seatNumbers)}
+                  {this.renderRows(Math.max(seatRows), Math.max(seatNumbers))}
                   </tbody>
                   </table>
               </Row>
