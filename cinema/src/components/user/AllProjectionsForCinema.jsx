@@ -93,7 +93,7 @@ class AllProjectionsForCinema extends Component {
         {
          return <Button 
                 key={movie.projections} 
-                onClick={() => this.navigateToProjectionDetails(movie.id)} 
+                onClick={() => this.navigateToProjectionDetails(projection.id)} 
                 className="mr-1 mb-2"
               >
                 {projection.projectionTime}
