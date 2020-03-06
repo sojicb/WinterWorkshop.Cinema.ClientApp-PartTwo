@@ -29,7 +29,7 @@ class ProjectionDetails extends Component {
   componentDidMount() {
     const { id } = this.props.match.params; 
     this.getProjection(id);
-    this.getAuditorium();
+    //this.getAuditorium();
 
   }
   /*getProjection(id) {
@@ -87,6 +87,9 @@ class ProjectionDetails extends Component {
              rating: data.rating, isLoading: false });
           }
       })
+      .then(() => {
+        this.getAuditorium();
+      })
       .catch(response => {
           this.setState({ submitted: false });
           NotificationManager.error(response.message || response.statusText);
@@ -94,8 +97,12 @@ class ProjectionDetails extends Component {
   }
 
   getAuditorium() {
-    const auditoriumId = this.state;
-    console.log(auditoriumId);
+    let {auditoriumId} = this.state;
+    console.log("Auditorium Id is: " + auditoriumId);
+
+    if(!auditoriumId) {
+			return;
+		}  
     // TO DO: here you need to fetch movie with projection details using ID from router
     const requestOptions = {
       method: 'GET',
@@ -132,8 +139,9 @@ class ProjectionDetails extends Component {
 
   fillingNumbers() {
     return this.state.seats.map(seat => {
+      console.log("SEATS!!!!: " + JSON.stringify(Math.max(seat.number)))
       return <li>
-        {seat.number}
+        {(Math.max(seat.number))}
       </li>
     });
   }
@@ -160,6 +168,8 @@ class ProjectionDetails extends Component {
     const { title, auditoriumName, projectionTime, seats } = this.state;
     const seatRows = this.fillingRows();
     const seatNumbers = this.fillingNumbers();
+    console.log("There is numbers of rows: " + seatRows);
+    console.log("There is numbers of seats: " + seatNumbers);
       return (
         <Container>
           <Row className="justify-content-center">
