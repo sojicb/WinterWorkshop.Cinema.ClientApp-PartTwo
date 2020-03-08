@@ -30,7 +30,7 @@ class Dashboard extends Component {
             <Row className="justify-content-center no-gutters">
                 <Col lg={2} className="dashboard-navigation">
                     <Row className="justify-content-center mt-2">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faFilm}/>Movie</span>
+                        <span className="fa-2x text-black"><FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faFilm}/>Movie</span>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Movies</NavLink>
@@ -45,7 +45,7 @@ class Dashboard extends Component {
                         <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Movie</NavLink>
                     </Row>
                     <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faBinoculars}/>Auditorium</span>
+                        <span className="fa-2x text-black"><FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faBinoculars}/>Auditorium</span>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllAuditoriums'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Auditoriums</NavLink>
@@ -54,7 +54,7 @@ class Dashboard extends Component {
                         <NavLink activeClassName="active-link" to='/dashboard/NewAuditorium'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Auditorium</NavLink>
                     </Row>
                     <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faTicketAlt}/>Cinema</span>
+                        <span className="fa-2x text-black"><FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faTicketAlt}/>Cinema</span>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllCinemas'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Cinemas</NavLink>
@@ -63,7 +63,7 @@ class Dashboard extends Component {
                         <NavLink activeClassName="active-link" to='/dashboard/NewCinema'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Cinema</NavLink>
                     </Row>
                     <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faVideo}/>Projection</span>
+                        <span className="fa-2x text-black"><FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faVideo}/>Projection</span>
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/AllProjections'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Projections</NavLink>

@@ -139,7 +139,7 @@ class AllProjectionsForCinema extends Component {
                         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
-          <React.Fragment>
+         <React.Fragment>
                 <Row className="no-gutters pt-2">
                     <h1 className="form-header ml-2">New Movies in our Nine Cinema:</h1>
                 </Row>

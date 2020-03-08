@@ -91,7 +91,7 @@ class ShowAllAuditoriums extends Component {
     render() {
         const {isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="dark">
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
                             <thead>
                             <tr>
                                 <th>Id</th>

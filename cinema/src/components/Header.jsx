@@ -60,7 +60,7 @@ login() {
     render() {
       const { username } = this.state;
         return (
-            <Navbar bg="dark" expand="sm">
+            <Navbar bg="light" expand="lg">
             <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/projectionlist'>Cinema 9</Link></Navbar.Brand>
             <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard'>Dashboard</Link></Navbar.Brand>
             <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard/topmovies'>Top Movies</Link></Navbar.Brand>
