@@ -74,7 +74,7 @@ login() {
                   value={username}
                   onChange={this.handleChange}
                   className="mr-sm-2" />
-                <Button type="submit" variant="outline-success" className="mr-1">Log In</Button>
+                <Button type="submit" variant="outline-primary" className="mr-1">Log In</Button>
               </Form>
             </Navbar.Collapse>
           </Navbar>
