@@ -91,6 +91,7 @@ class AllProjectionsForCinema extends Component {
       
       return projections.map(projection => 
         {
+          this.forceUpdate();
          return <Button 
                 key={movie.projections} 
                 onClick={() => this.navigateToProjectionDetails(projection.id)} 
@@ -104,6 +105,7 @@ class AllProjectionsForCinema extends Component {
     fillTableWithDaata() {
       return this.state.movies.map(movie => {
         console.log(movie);
+        this.forceUpdate();
           return <tr> 
         <Card className="mt-5 card-width">
             <Card.Body>
