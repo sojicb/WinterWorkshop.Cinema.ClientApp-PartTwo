@@ -172,7 +172,6 @@ class ProjectionDetails extends Component {
     const numOfSeatsPerRow = this.maxSeatsPerRow();
     const rows = this.maxRows();
     console.log(seatsForReservation);
-    this.forceUpdate();  
      return (
         <Container>
           <Row className="justify-content-center">
