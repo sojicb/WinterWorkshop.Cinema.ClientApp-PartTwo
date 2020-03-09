@@ -20,21 +20,27 @@ class ProjectionDetails extends Component {
         auditoriumId: '',
         seats: [],
         numOfRows: [],
-        seatsForReservation: []
+        seatsForReservation: [],
+        userId: '',
+        projectionId: '',
+        color: '',
+        ticketPrice: 0,
+        reservedSeats: ''
     };
 
     this.getProjection = this.getProjection.bind(this);
+    this.insertingReservation = this.insertingReservation.bind(this);
+    this.getReservedSeats = this.getReservedSeats.bind(this);
   }
 
   componentDidMount() {
     const { id } = this.props.match.params; 
     this.getProjection(id);
-    //this.getAuditorium();
+    this.getReservedSeats();
 
   }
 
   getProjection(id) {
-    console.log(id);
     const requestOptions = {
       method: 'GET',
       headers: {'Content-Type': 'application/json',
@@ -61,6 +67,9 @@ class ProjectionDetails extends Component {
       .then(() => {
         this.getAuditorium();
       })
+      .then(() => {
+        this.getReservedSeats();
+      })
       .catch(response => {
           this.setState({ submitted: false });
           NotificationManager.error(response.message || response.statusText);
@@ -69,19 +78,57 @@ class ProjectionDetails extends Component {
 
   getAuditorium() {
     let {auditoriumId} = this.state;
-    console.log("Auditorium Id is: " + auditoriumId);
-
+    
     if(!auditoriumId) {
-			return;
-		}  
+    return;
+    }
     // TO DO: here you need to fetch movie with projection details using ID from router
+    const requestOptions = {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+    this.setState({isLoading: true});
+    fetch(`${serviceConfig.baseURL}/api/auditoriums/get/${auditoriumId}`, requestOptions)
+    .then(response => {
+    if (!response.ok) {
+    return Promise.reject(response);
+    }
+    return response.json();
+    })
+    .then(data => {
+    if (data) {
+    this.setState({ auditId: data.id,
+    seats: data.seatsList, isLoading: false }, () => {
+        this.state.seats.forEach( seat => {
+            seat.seatColor = 'yellow';
+        });
+    });
+    
+    }
+    })
+    .catch(response => {
+    this.setState({ submitted: false });
+    NotificationManager.error(response.message || response.statusText);
+    });
+  }
+
+  /*getReservedSeats() {
+
+    let {auditoriumId, reservedSeats} = this.state;
+    console.log('ispis ' + auditoriumId);
+    
+    if(!auditoriumId) {
+    return;
+    }
+
     const requestOptions = {
       method: 'GET',
       headers: {'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
     this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/auditoriums/get/${auditoriumId}`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -90,21 +137,115 @@ class ProjectionDetails extends Component {
       })
       .then(data => {
           if (data) {
-          this.setState({ auditId: data.id,
-             seats: data.seatsList, isLoading: false });
+            console.log('seaats: ' + JSON.stringify(data));
+          this.setState({ id: data.id,
+             auditoriumId: data.auditoriumId,
+             reservedSeats: data.seatsList, isLoading: false }, () => {
+              this.state.seats.forEach( seat => {
+                console.log(reservedSeats);
+                  if(reservedSeats.includes(seat))
+                  seat.seatColor = 'red';
+              });
+            });
           }
+      })
+      .then(() => {
+        this.getAuditorium();
       })
       .catch(response => {
           this.setState({ submitted: false });
           NotificationManager.error(response.message || response.statusText);
       });
-  }
+  }*/
 
-  handleReservation(seatId) {
+  /*handleReservation(seatId) {
+    const {seats} = this.state;
+    const seatTocolorIndex = seats.indexOf(seats.find(seat => seat.id === seatId));
+    const seatTocolor = seats.find(seat => seat.id === seatId);
+    seatTocolor.seatColor = 'black';
+    seats[seatTocolorIndex] = seatTocolor;
     const {seatsForReservation} = this.state;
     seatsForReservation.push(seatId);
-    this.setState({seatsForReservation});
-}
+    this.setState({seatsForReservation, seats: seats});
+    }
+  */
+  
+  getReservedSeats() {
+
+    let {auditoriumId, reservedSeats} = this.state;
+    
+    if(!auditoriumId) {
+    return;
+    }
+    
+    const requestOptions = {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+    this.setState({isLoading: true});
+    fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
+    .then(response => {
+    if (!response.ok) {
+    return Promise.reject(response);
+    }
+    return response.json();
+    })
+    .then(data => {
+    if (data) {
+    const {seats} = this.state;
+    console.log('all seats: ', seats);
+console.log('all reserved seats: ', data);
+    const allSeatsWithReservations = [];
+    seats.forEach(seat => {
+    const isReserved = data.some(reserved => reserved.id === seat.id);
+    if (isReserved) {
+    seat.seatColor='gray';
+    seat.isReserved = true;
+    } else {
+    seat.seatColor='yellow';
+    seat.isReserved = false;
+    }
+    allSeatsWithReservations.push(seat);
+    });
+    this.setState({ id: data.id,
+    auditoriumId: data.auditoriumId,
+    seats: allSeatsWithReservations, isLoading: false }, () => {console.log('Teodorov log: ' + this.state.seats)});
+  }
+    })
+    .then(() => {
+    this.getAuditorium();
+    })
+    .catch(response => {
+    this.setState({ submitted: false });
+    NotificationManager.error(response.message || response.statusText);
+    });
+    }
+
+  handleReservation(seatId) {
+  const {seats} = this.state;
+  console.log('Drugi teodorov log: ' + JSON.stringify(this.state.seats))
+  const seatTocolorIndex = seats.indexOf(seats.find(seat => seat.id === seatId));
+  const seatTocolor = seats.find(seat => seat.id === seatId);
+  seatTocolor.seatColor = 'black';
+  seats[seatTocolorIndex] = seatTocolor;
+  const {seatsForReservation} = this.state;
+  seatsForReservation.push(seatId);
+  this.setState({seatsForReservation, seats: seats});
+  }
+
+  handleSubmit(e) {
+  e.preventDefault();
+
+  this.setState({ submitted: true });
+  const { seatsForReservation } = this.state;
+  if (seatsForReservation) {
+      this.insertingReservation();
+  } else {
+      NotificationManager.error('Please choose seats.');
+      this.setState({ submitted: false });
+   }
+  }
 
   maxRows() {
     const {seats} = this.state;
@@ -123,54 +264,72 @@ class ProjectionDetails extends Component {
     }
     return seat;
   } 
-  
-  // renderRows(rows, seats) {
-  //   const rowsRendered = [];
-  //   for (let i = 0; i < rows; i++) {
-  //     console.log(seats[i]);
-  //       rowsRendered.push( <tr key={i} >
-  //           {this.renderSeats(seats, i)}
-  //       </tr>);
-  //   }
-  //   return rowsRendered;
-  // }
-
-  // renderSeats(seats, row) {
-  //     let renderedSeats = [];
-  //     for (let i = 0; i < seats; i++) {
-  //       console.log(seats[i]);
-  //         renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
-  //     }
-  //     return renderedSeats;
-  // }
-
   renderRows(rows, seats, seatsPerRow) {
     const rowsRendered = [];
     for (let i = 1; i <= rows; i++) {
-    //console.log(i);
-    rowsRendered.push( <tr key={i} >
+    rowsRendered.push(<tr key={i} >
     {this.renderSeats(seats, i, seatsPerRow)}
     </tr>);
     }
     return rowsRendered;
     }
 
-  renderSeats(seats, row, seatsPerRow) {
-    let renderedSeats = [];
-    for (let i = 0; i < seats.length; i++) {
-      //console.log(row);
+    renderSeats(seats, row, seatsPerRow) {
+      let renderedSeats = [];
+      for (let i = 0; i < seats.length; i++) {
       if(seats[i].row === row){
-        //console.log(seats[i]);
-        renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i} onClick={() => this.handleReservation(seats[i].id)}></td>);
+      renderedSeats.push(<td style={{backgroundColor: seats[i].seatColor}} key={'row: ' + row + ', seat: ' + i}
+      onClick={() => this.handleReservation(seats[i].id)}>
+      
+      </td>);
       }
-    }
-    return renderedSeats;
-    }
+      }
+      return renderedSeats;
+      }
+
+  
+  insertingReservation() {
+      const { auditoriumId, id, projectionTime, seatsForReservation  } = this.state;
+
+      ///var seatsForReservation = this.state;
+      const data = {
+          AuditoriumId: auditoriumId,
+          UserId : "206F083A-1080-4EA3-92E4-62105C33FCB9",
+          ProjectionId : id,
+          ProjectionTime: projectionTime,
+          SeatIds: seatsForReservation
+      };
+
+      const requestOptions = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+          body: JSON.stringify(data)
+      };
+
+      fetch(`${serviceConfig.baseURL}/api/reservations`, requestOptions)
+          .then(response => {
+              if (!response.ok) {
+                  return Promise.reject(response);
+              }
+              return response.statusText;
+          })
+          .then(result => {
+              NotificationManager.success('Successfull reservation!');
+              //this.props.history.push(`AllMovies`);
+              this.setState({seatsForReservation: []});
+          })
+          .catch(response => {
+              NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
+              this.setState({ submitted: false, seatsForReservation: []});
+          });
+  }
 
   render() {
     const { title, auditoriumName, projectionTime, seats, seatsForReservation } = this.state;
     const numOfSeatsPerRow = this.maxSeatsPerRow();
     const rows = this.maxRows();
+    const ticketPrice = seatsForReservation.length * 800;
     console.log(seatsForReservation);
      return (
         <Container>
@@ -205,7 +364,17 @@ class ProjectionDetails extends Component {
         <hr/>
         </Card.Text>
         <Row className="justify-content-center font-weight-bold">
-          Price for reserved seats:  800 RSD
+          Price for reserved seats: {ticketPrice} RSD
+        </Row>
+        <Row className="justify-content-center font-weight-bold">
+        
+        <Button 
+            type="submit"
+            onClick={() => this.insertingReservation()}
+            className="mr-1 mb-2"
+            >
+             Reserve seat/s
+        </Button>
         </Row>
         <img className="img-responsive" src="https://source.unsplash.com/random" alt="logo" align="center" width="500" height="350" />
       </Card.Body>

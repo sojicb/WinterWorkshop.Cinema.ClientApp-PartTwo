@@ -93,7 +93,7 @@ class NewMovie extends React.Component {
             })
             .then(result => {
                 NotificationManager.success('Successfuly added movie!');
-                this.props.history.push(`AllMovies`);
+                //this.props.history.push(`AllMovies`);
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
