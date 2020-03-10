@@ -170,7 +170,7 @@ class ProjectionDetails extends Component {
     }
   */
   
-  getReservedSeats() {
+  /*getReservedSeats() {
 
     let {auditoriumId, reservedSeats} = this.state;
     
@@ -208,7 +208,7 @@ console.log('all reserved seats: ', data);
     }
     allSeatsWithReservations.push(seat);
     });
-    this.setState({ id: data.id,
+    this.setState({ seatid: data.id,
     auditoriumId: data.auditoriumId,
     seats: allSeatsWithReservations, isLoading: false }, () => {console.log('Teodorov log: ' + this.state.seats)});
   }
@@ -220,11 +220,51 @@ console.log('all reserved seats: ', data);
     this.setState({ submitted: false });
     NotificationManager.error(response.message || response.statusText);
     });
-    }
+    }*/
+
+    getReservedSeats() {
+
+      let {auditoriumId, reservedSeats} = this.state;
+      
+      if(!auditoriumId) {
+      return;
+      }
+      
+      const requestOptions = {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+      };
+      this.setState({isLoading: true});
+      fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
+      .then(response => {
+      if (!response.ok) {
+      return Promise.reject(response);
+      }
+      return response.json();
+      })
+      .then(data => {
+      if (data) {
+        console.log("Log123123: " + JSON.stringify(data));
+        console.log('vec postojeca sedista: ', this.state.seats);
+        data.forEach(seat => {
+          console.log('seat Id is: ' + seat.id);
+      })
+      this.setState({
+      reservedSeats: data, isLoading: false });
+      }
+      })
+      .then(() => {
+      this.getAuditorium();
+      })
+      .catch(response => {
+      this.setState({ submitted: false });
+      NotificationManager.error(response.message || response.statusText);
+      });
+      }
 
   handleReservation(seatId) {
   const {seats} = this.state;
-  console.log('Drugi teodorov log: ' + JSON.stringify(this.state.seats))
   const seatTocolorIndex = seats.indexOf(seats.find(seat => seat.id === seatId));
   const seatTocolor = seats.find(seat => seat.id === seatId);
   seatTocolor.seatColor = 'black';
@@ -274,7 +314,7 @@ console.log('all reserved seats: ', data);
     return rowsRendered;
     }
 
-    renderSeats(seats, row, seatsPerRow) {
+  renderSeats(seats, row, seatsPerRow) {
       let renderedSeats = [];
       for (let i = 0; i < seats.length; i++) {
       if(seats[i].row === row){
@@ -287,6 +327,24 @@ console.log('all reserved seats: ', data);
       return renderedSeats;
       }
 
+   returnReservedSeats() {
+        const {seats, reservedSeats} = this.state;
+        console.log('all seats: ', seats);
+        console.log('all reserved seats: ', reservedSeats);
+        const allSeatsWithReservations = [];
+        seats.forEach(seat => {
+            const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
+            if (isReserved) {
+                seat.seatColor='gray';
+                seat.isReserved = true;
+            } else {
+                seat.seatColor='yellow';
+                seat.isReserved = false;
+            }
+            allSeatsWithReservations.push(seat);
+        });
+    return allSeatsWithReservations;
+    }
   
   insertingReservation() {
       const { auditoriumId, id, projectionTime, seatsForReservation  } = this.state;
@@ -299,6 +357,7 @@ console.log('all reserved seats: ', data);
           ProjectionTime: projectionTime,
           SeatIds: seatsForReservation
       };
+      console.log('Here is this log: ' + JSON.stringify(data));
 
       const requestOptions = {
           method: 'POST',
@@ -322,7 +381,12 @@ console.log('all reserved seats: ', data);
           .catch(response => {
               NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
               this.setState({ submitted: false, seatsForReservation: []});
-          });
+                const timer = setTimeout(() => {
+                  window.location.reload();
+                  console.log('This will run after 1 second!')
+                }, 4000);
+                return () => clearTimeout(timer);
+              }, []);
   }
 
   render() {
@@ -354,7 +418,7 @@ console.log('all reserved seats: ', data);
               <Row className="justify-content-center">
                   <table className="table-cinema-auditorium">
                   <tbody>
-                  {this.renderRows(rows , seats, numOfSeatsPerRow)}
+                  {this.renderRows(rows , this.returnReservedSeats(), numOfSeatsPerRow)}
                   </tbody>
                   </table>
               </Row>
