@@ -266,11 +266,12 @@ class ProjectionDetails extends Component {
               return response.statusText;
           })
           .then(() => {
-            this.simulatingPayment();
+            let isSuccess = this.simulatingPayment();
+            return isSuccess;
           })
           .then(result => {
               NotificationManager.success('Successfull reservation, processing payment!');
-              this.setState({seatsForReservation: []});
+              this.setState({ seatsForReservation: [] });
               const timer = setTimeout(() => {
                 window.location.reload();
                 console.log('This will run after 5 seconds!')
@@ -303,6 +304,7 @@ class ProjectionDetails extends Component {
         })
         .then(result => {
           NotificationManager.success('Successfull payment!');
+          return true;
         })
         .catch(response => {
             NotificationManager.error('Insuficient funds, please try again!');
