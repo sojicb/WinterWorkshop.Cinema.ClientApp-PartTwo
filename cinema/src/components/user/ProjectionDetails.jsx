@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Container, Row, Col, Card , Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChair, faCouch, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
+
 
 class ProjectionDetails extends Component {
   constructor(props) {
@@ -209,10 +212,10 @@ class ProjectionDetails extends Component {
       let renderedSeats = [];
       for (let i = 0; i < seats.length; i++) {
       if(seats[i].row === row){
-      renderedSeats.push(<td style={{backgroundColor: seats[i].seatColor}} key={'row: ' + row + ', seat: ' + i}
+      renderedSeats.push(<span className="fa-2x text-black"><td style={{backgroundColor: seats[i].seatColor}} key={'row: ' + row + ', seat: ' + i}
       onClick={() => this.handleReservation(seats[i].id)}>
-      
-      </td>);
+      <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faCouch}/>
+      </td></span>);
       }
       }
       return renderedSeats;
@@ -262,8 +265,11 @@ class ProjectionDetails extends Component {
               }
               return response.statusText;
           })
+          .then(() => {
+            this.simulatingPayment();
+          })
           .then(result => {
-              NotificationManager.success('Successfull reservation!');
+              NotificationManager.success('Successfull reservation, processing payment!');
               this.setState({seatsForReservation: []});
               const timer = setTimeout(() => {
                 window.location.reload();
@@ -273,34 +279,22 @@ class ProjectionDetails extends Component {
           })
           .catch(response => {
               NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
-              this.setState({ submitted: false, seatsForReservation: []});
+              this.setState({submitted: false, seatsForReservation: []});
                 const timer = setTimeout(() => {
                   window.location.reload();
                 }, 4000);
                 return () => clearTimeout(timer);
-              }, []);
+              });
   }
-
+  
   simulatingPayment(){
-    const { auditoriumId, id, projectionTime, seatsForReservation  } = this.state;
-
-    const data = {
-        AuditoriumId: auditoriumId,
-        UserId : "206F083A-1080-4EA3-92E4-62105C33FCB9",
-        ProjectionId : id,
-        ProjectionTime: projectionTime,
-        SeatIds: seatsForReservation
-    };
-    console.log('Here is this log: ' + JSON.stringify(data));
 
     const requestOptions = {
         method: 'POST',
         headers: {'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
-        body: JSON.stringify(data)
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
-
-    fetch(`${serviceConfig.baseURL}/api/reservations`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/Levi9Payment`, requestOptions)
         .then(response => {
             if (!response.ok) {
                 return Promise.reject(response);
@@ -308,23 +302,33 @@ class ProjectionDetails extends Component {
             return response.statusText;
         })
         .then(result => {
-            NotificationManager.success('Successfull reservation!');
-            this.setState({seatsForReservation: []});
-            const timer = setTimeout(() => {
-              window.location.reload();
-              console.log('This will run after 5 seconds!')
-            }, 5000);
-            return () => clearTimeout(timer);
+          NotificationManager.success('Successfull payment!');
         })
         .catch(response => {
-            NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
-            this.setState({ submitted: false, seatsForReservation: []});
+            NotificationManager.error('Insuficient funds, please try again!');
+              });
+        /*.then(result => {
+          NotificationManager.success('Successfull reservation, processing payment!');
+              this.setState({seatsForReservation: []});
+          NotificationManager.success('Successfull payment!');
               const timer = setTimeout(() => {
                 window.location.reload();
-              }, 4000);
+                console.log('This will run after 5 seconds!')
+              }, 5000);
               return () => clearTimeout(timer);
-            }, []);
-}
+        })
+        .catch(response => {
+           NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
+              this.setState({ submitted: false, seatsForReservation: []});
+            NotificationManager.error('Insuficient funds, please try again!');
+                const timer = setTimeout(() => {
+                  window.location.reload();
+                }, 4000);
+                return () => clearTimeout(timer);
+              });*/
+  }
+
+
   render() {
     const { title, auditoriumName, projectionTime, seats, seatsForReservation } = this.state;
     const numOfSeatsPerRow = this.maxSeatsPerRow();
