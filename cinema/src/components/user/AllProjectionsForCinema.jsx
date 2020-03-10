@@ -16,14 +16,12 @@ class AllProjectionsForCinema extends Component {
           isLoading: false
       };
       this.getProjections = this.getProjections.bind(this);
-      //this.getProjectionsById = this.getProjectionsById.bind(this);
 
 
     }
 
     componentDidMount() {
        this.getProjections();
-       //this.getProjectionsById();
     }
 
     getProjections() {
@@ -52,36 +50,6 @@ class AllProjectionsForCinema extends Component {
             this.setState({ submitted: false });
         });
     }
-
-    /*getProjectionsById(id) {
-      
-      if(!id) {
-        return;
-      }
-      const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-      };
-      this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/${id}`, requestOptions)
-        .then(response => {
-          if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-          if (data) {
-            this.setState({ movie: data, isLoading: false });
-            }
-        })
-        .catch(response => {
-            this.setState({isLoading: false});
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
-    }*/
   
     navigateToProjectionDetails(id) {
       this.props.history.push(`projectiondetails/getProjection/${id}`);
@@ -152,9 +120,3 @@ class AllProjectionsForCinema extends Component {
 }
 
 export default withRouter(AllProjectionsForCinema);
-
-
-/*const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
-      return projectionTimes.map((time, index) => {
-        return <Button key={index} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{time}</Button>
-      })*/

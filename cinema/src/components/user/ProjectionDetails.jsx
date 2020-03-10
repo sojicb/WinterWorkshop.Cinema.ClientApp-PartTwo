@@ -112,119 +112,10 @@ class ProjectionDetails extends Component {
     NotificationManager.error(response.message || response.statusText);
     });
   }
-
-  /*getReservedSeats() {
-
-    let {auditoriumId, reservedSeats} = this.state;
-    console.log('ispis ' + auditoriumId);
-    
-    if(!auditoriumId) {
-    return;
-    }
-
-    const requestOptions = {
-      method: 'GET',
-      headers: {'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-    this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject(response);
-      }
-      return response.json();
-      })
-      .then(data => {
-          if (data) {
-            console.log('seaats: ' + JSON.stringify(data));
-          this.setState({ id: data.id,
-             auditoriumId: data.auditoriumId,
-             reservedSeats: data.seatsList, isLoading: false }, () => {
-              this.state.seats.forEach( seat => {
-                console.log(reservedSeats);
-                  if(reservedSeats.includes(seat))
-                  seat.seatColor = 'red';
-              });
-            });
-          }
-      })
-      .then(() => {
-        this.getAuditorium();
-      })
-      .catch(response => {
-          this.setState({ submitted: false });
-          NotificationManager.error(response.message || response.statusText);
-      });
-  }*/
-
-  /*handleReservation(seatId) {
-    const {seats} = this.state;
-    const seatTocolorIndex = seats.indexOf(seats.find(seat => seat.id === seatId));
-    const seatTocolor = seats.find(seat => seat.id === seatId);
-    seatTocolor.seatColor = 'black';
-    seats[seatTocolorIndex] = seatTocolor;
-    const {seatsForReservation} = this.state;
-    seatsForReservation.push(seatId);
-    this.setState({seatsForReservation, seats: seats});
-    }
-  */
   
-  /*getReservedSeats() {
+  getReservedSeats() {
 
-    let {auditoriumId, reservedSeats} = this.state;
-    
-    if(!auditoriumId) {
-    return;
-    }
-    
-    const requestOptions = {
-    method: 'GET',
-    headers: {'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-    this.setState({isLoading: true});
-    fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
-    .then(response => {
-    if (!response.ok) {
-    return Promise.reject(response);
-    }
-    return response.json();
-    })
-    .then(data => {
-    if (data) {
-    const {seats} = this.state;
-    console.log('all seats: ', seats);
-console.log('all reserved seats: ', data);
-    const allSeatsWithReservations = [];
-    seats.forEach(seat => {
-    const isReserved = data.some(reserved => reserved.id === seat.id);
-    if (isReserved) {
-    seat.seatColor='gray';
-    seat.isReserved = true;
-    } else {
-    seat.seatColor='yellow';
-    seat.isReserved = false;
-    }
-    allSeatsWithReservations.push(seat);
-    });
-    this.setState({ seatid: data.id,
-    auditoriumId: data.auditoriumId,
-    seats: allSeatsWithReservations, isLoading: false }, () => {console.log('Teodorov log: ' + this.state.seats)});
-  }
-    })
-    .then(() => {
-    this.getAuditorium();
-    })
-    .catch(response => {
-    this.setState({ submitted: false });
-    NotificationManager.error(response.message || response.statusText);
-    });
-    }*/
-
-    getReservedSeats() {
-
-      let {auditoriumId, reservedSeats} = this.state;
+      let {auditoriumId, reservedSeats, projectionTime} = this.state;
       
       if(!auditoriumId) {
       return;
@@ -236,7 +127,7 @@ console.log('all reserved seats: ', data);
       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
       };
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/seats/reserved/${auditoriumId}`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/seats/reserved/?id=${auditoriumId}&projectiontime=${projectionTime}`, requestOptions)
       .then(response => {
       if (!response.ok) {
       return Promise.reject(response);
@@ -327,7 +218,7 @@ console.log('all reserved seats: ', data);
       return renderedSeats;
       }
 
-   returnReservedSeats() {
+  returnReservedSeats() {
         const {seats, reservedSeats} = this.state;
         console.log('all seats: ', seats);
         console.log('all reserved seats: ', reservedSeats);
@@ -338,7 +229,6 @@ console.log('all reserved seats: ', data);
                 seat.seatColor='gray';
                 seat.isReserved = true;
             } else {
-                seat.seatColor='yellow';
                 seat.isReserved = false;
             }
             allSeatsWithReservations.push(seat);
@@ -349,7 +239,6 @@ console.log('all reserved seats: ', data);
   insertingReservation() {
       const { auditoriumId, id, projectionTime, seatsForReservation  } = this.state;
 
-      ///var seatsForReservation = this.state;
       const data = {
           AuditoriumId: auditoriumId,
           UserId : "206F083A-1080-4EA3-92E4-62105C33FCB9",
@@ -375,15 +264,18 @@ console.log('all reserved seats: ', data);
           })
           .then(result => {
               NotificationManager.success('Successfull reservation!');
-              //this.props.history.push(`AllMovies`);
               this.setState({seatsForReservation: []});
+              const timer = setTimeout(() => {
+                window.location.reload();
+                console.log('This will run after 5 seconds!')
+              }, 5000);
+              return () => clearTimeout(timer);
           })
           .catch(response => {
               NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
               this.setState({ submitted: false, seatsForReservation: []});
                 const timer = setTimeout(() => {
                   window.location.reload();
-                  console.log('This will run after 1 second!')
                 }, 4000);
                 return () => clearTimeout(timer);
               }, []);
