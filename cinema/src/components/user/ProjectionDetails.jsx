@@ -281,6 +281,50 @@ class ProjectionDetails extends Component {
               }, []);
   }
 
+  simulatingPayment(){
+    const { auditoriumId, id, projectionTime, seatsForReservation  } = this.state;
+
+    const data = {
+        AuditoriumId: auditoriumId,
+        UserId : "206F083A-1080-4EA3-92E4-62105C33FCB9",
+        ProjectionId : id,
+        ProjectionTime: projectionTime,
+        SeatIds: seatsForReservation
+    };
+    console.log('Here is this log: ' + JSON.stringify(data));
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+        body: JSON.stringify(data)
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/reservations`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.statusText;
+        })
+        .then(result => {
+            NotificationManager.success('Successfull reservation!');
+            this.setState({seatsForReservation: []});
+            const timer = setTimeout(() => {
+              window.location.reload();
+              console.log('This will run after 5 seconds!')
+            }, 5000);
+            return () => clearTimeout(timer);
+        })
+        .catch(response => {
+            NotificationManager.error('Seats that you have chosen are not consecutive or they are already reserved, please try again.');
+            this.setState({ submitted: false, seatsForReservation: []});
+              const timer = setTimeout(() => {
+                window.location.reload();
+              }, 4000);
+              return () => clearTimeout(timer);
+            }, []);
+}
   render() {
     const { title, auditoriumName, projectionTime, seats, seatsForReservation } = this.state;
     const numOfSeatsPerRow = this.maxSeatsPerRow();
