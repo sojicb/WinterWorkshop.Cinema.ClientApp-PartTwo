@@ -239,6 +239,7 @@ class ProjectionDetails extends Component {
     console.log('all reserved seats: ', reservedSeats);
     const allSeatsWithReservations = [];
     seats.forEach(seat => {
+      if(reservedSeats.length > 0){
       const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
       if (isReserved) {
         seat.seatColor = 'gray';
@@ -246,9 +247,9 @@ class ProjectionDetails extends Component {
       } else {
         seat.isReserved = false;
       }
-      allSeatsWithReservations.push(seat);
+      allSeatsWithReservations.push(seat);}
     });
-    return allSeatsWithReservations;
+    return seats;
   }
 
   simulatingPayment() {
