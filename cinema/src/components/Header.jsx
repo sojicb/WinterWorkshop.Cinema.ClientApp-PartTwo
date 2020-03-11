@@ -60,8 +60,10 @@ login() {
     render() {
       const { username } = this.state;
         return (
-            <Navbar bg="dark" expand="lg">
+            <Navbar bg="light" expand="lg">
             <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/projectionlist'>Cinema 9</Link></Navbar.Brand>
+            <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard'>Dashboard</Link></Navbar.Brand>
+            <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/topmovies'>Top Movies</Link></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" className="text-white" />
             <Navbar.Collapse id="basic-navbar-nav" className="text-white">
               <Nav className="mr-auto text-white" >
@@ -72,7 +74,7 @@ login() {
                   value={username}
                   onChange={this.handleChange}
                   className="mr-sm-2" />
-                <Button type="submit" variant="outline-success" className="mr-1">Log In</Button>
+                <Button type="submit" variant="outline-primary" className="mr-1">Log In</Button>
               </Form>
             </Navbar.Collapse>
           </Navbar>

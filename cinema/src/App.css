@@ -3,7 +3,7 @@
 }
 
 .dashboard-navigation{
-  background-color: #3e444a;
+  background-color: #f6fafa;
 }
 
 .app-content-main{
@@ -34,28 +34,40 @@
 
 .table-cinema-auditorium {
   border-collapse: separate;
-  border-spacing: 10px;
+  border-spacing: 1px;
 }
 
 .table-cinema-auditorium td {
-  border: 1px solid black;
+  border: 2px solid black;
   padding: 15px !important;
-  background-color: blue;
+  background-color: yellow; 
+  border-radius: 25px; 
+  width: 30px;
+  height: 15px;
+  opacity: 0.7;
 }
 
 .table-cinema-auditorium td:hover {
-  background-color: darkblue;
+  background-color: rgb(140, 44, 196);
   cursor: pointer;
 }
+
+.table-cinema-auditorium td:active {
+  background-color: rgb(78, 19, 241);
+}
+.table-cinema-auditorium td:focus {
+  background-color: rgb(35, 49, 236);
+}
+.table-cinema-auditorium 
 
 .table-cinema-auditorium tr {
   margin-bottom: 10px;
 }
 
 .cinema-screen {
-  background-color: blue;
-  height: 25px;
-  width: 90%;
+  background-color: rgb(4, 129, 245);
+  height: 30px;
+  width: 100%;
 }
 
 .active-link {
