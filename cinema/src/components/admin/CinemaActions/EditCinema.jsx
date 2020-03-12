@@ -20,7 +20,7 @@ class EditCinema extends React.Component {
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params; 
+        const { id } = this.props.match.params;
         this.getCinema(id);
     }
 
@@ -33,11 +33,15 @@ class EditCinema extends React.Component {
     validate(id, value) {
         if (id === 'name') {
             if (value === '') {
-                this.setState({nameError: 'Fill in Cinema name', 
-                                canSubmit: false});
+                this.setState({
+                    nameError: 'Fill in Cinema name',
+                    canSubmit: false
+                });
             } else {
-                this.setState({nameError: '',
-                                canSubmit: true});
+                this.setState({
+                    nameError: '',
+                    canSubmit: true
+                });
             }
         }
     }
@@ -57,29 +61,33 @@ class EditCinema extends React.Component {
 
 
     getCinema(cinemaId) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/cinemas/get/${cinemaId}` , requestOptions)
-        .then(response => {
-        if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({name: data.name,
-                               id: data.id});
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/cinemas/get/${cinemaId}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        name: data.name,
+                        id: data.id
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     updateCinema() {
@@ -91,8 +99,10 @@ class EditCinema extends React.Component {
 
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 

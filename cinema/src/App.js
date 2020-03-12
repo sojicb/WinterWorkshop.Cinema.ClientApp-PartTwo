@@ -18,16 +18,16 @@ import { PrivateRouteAdmin } from './components/hoc/privateRouteAdmin';
 function App() {
   return (
     <React.Fragment>
-      <Header/>
+      <Header />
       <div className="set-overflow-y">
-      <Switch>
-        <Redirect exact from="/" to="projectionlist" />
-        <Route path="/projectiondetails/getProjection/:id" component={ProjectionDetails} />
-        <Route path="/projectionlist" component={AllProjectionsForCinema} />
-        <Route path="/topmovies" component={TopMovies}/> 
-        <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
-      </Switch>
-      <NotificationContainer />
+        <Switch>
+          <Redirect exact from="/" to="projectionlist" />
+          <Route path="/projectiondetails/getProjection/:id" component={ProjectionDetails} />
+          <Route path="/projectionlist" component={AllProjectionsForCinema} />
+          <Route path="/topmovies" component={TopMovies} />
+          <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
+        </Switch>
+        <NotificationContainer />
       </div>
     </React.Fragment>
   );

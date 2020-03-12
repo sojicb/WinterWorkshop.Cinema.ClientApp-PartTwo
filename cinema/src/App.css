@@ -25,7 +25,7 @@
   height: 180px;
   width: 180px;
   position: absolute;
-  background: rgb(250, 250, 250);
+  background: rgb(255, 255, 255);
   background-image: url(https://media-exp1.licdn.com/dms/image/C560BAQHaB9VKtCspXw/company-logo_200_200/0?e=2159024400&v=beta&t=kjvkVc2YmMyQuaDy36ElGmA1BlpcrELmDD1CIl9bnBY);
   align-content: center;
   top: 10px;
@@ -209,13 +209,6 @@ body {
   }
 }
 
-/*
-
-  A cool background animation using CSS3.
-  Note: This only features the -webkit- vendor prefixes.
-
-*/
-
 
 body, html, ul, li, img, div{
   margin:0; padding:0; align-content: center;
@@ -261,160 +254,7 @@ body, html, ul, li, img, div{
   75%, 90%{
     transform:translateX(0);
   }
-  
 }
-
-
-
-
-
-/*SLIDER 1*/
-/*html, body { background: #333 url("https://codepen.io/images/classy_fabric.png"); }
-
-.slides {
-    padding: 0;
-    width: 609px;
-    height: 420px;
-    display: block;
-    margin: 0 auto;
-    position: relative;
-}
-
-.slides * {
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-}
-
-.slides input { display: none; }
-
-.slide-container { display: block; }
-
-.slide {
-    top: 0;
-    opacity: 0;
-    width: 609px;
-    height: 420px;
-    display: block;
-    position: absolute;
-
-    transform: scale(0);
-
-    transition: all .7s ease-in-out;
-}
-
-.slide img {
-    width: 100%;
-    height: 100%;
-}
-
-.nav label {
-    width: 200px;
-    height: 100%;
-    display: none;
-    position: absolute;
-
-	  opacity: 0;
-    z-index: 9;
-    cursor: pointer;
-
-    transition: opacity .2s;
-
-    color: #FFF;
-    font-size: 156pt;
-    text-align: center;
-    line-height: 380px;
-    font-family: "Varela Round", sans-serif;
-    background-color: rgba(255, 255, 255, .3);
-    text-shadow: 0px 0px 15px rgb(119, 119, 119);
-}
-
-.slide:hover + .nav label { opacity: 0.5; }
-
-.nav label:hover { opacity: 1; }
-
-.nav .next { right: 0; }
-
-input:checked + .slide-container  .slide {
-    opacity: 1;
-
-    transform: scale(1);
-
-    transition: opacity 1s ease-in-out;
-}
-
-input:checked + .slide-container .nav label { display: block; }
-
-.nav-dots {
-	width: 100%;
-	bottom: 9px;
-	height: 11px;
-	display: block;
-	position: absolute;
-	text-align: center;
-}
-
-.nav-dots .nav-dot {
-	top: -5px;
-	width: 11px;
-	height: 11px;
-	margin: 0 4px;
-	position: relative;
-	border-radius: 100%;
-	display: inline-block;
-	background-color: rgba(0, 0, 0, 0.6);
-}
-
-.nav-dots .nav-dot:hover {
-	cursor: pointer;
-	background-color: rgba(0, 0, 0, 0.8);
-}
-
-input#img-1:checked ~ .nav-dots label#img-dot-1,
-input#img-2:checked ~ .nav-dots label#img-dot-2,
-input#img-3:checked ~ .nav-dots label#img-dot-3,
-input#img-4:checked ~ .nav-dots label#img-dot-4,
-input#img-5:checked ~ .nav-dots label#img-dot-5,
-input#img-6:checked ~ .nav-dots label#img-dot-6 {
-	background: rgba(0, 0, 0, 0.8);
-}*/
-  
-
-
-/*Coffe collor arror background*/
-/*body{
-  
-  background: 
-				linear-gradient(135deg, #ECEDDC 25%, transparent 25%) -50px 0,
-				linear-gradient(225deg, #ECEDDC 25%, transparent 25%) -50px 0,
-				linear-gradient(315deg, #ECEDDC 25%, transparent 25%),
-				linear-gradient(45deg, #ECEDDC 25%, transparent 25%);	
-				background-size: 20px 20px;
-				background-color: #D0D0D0;
-        
-        /* Animation defaults to a .3s loop 
-				-webkit-animation: backgroundAnimate 9s linear infinite;
-  
-}
-
-/* The Animation, switch the -100px to +100px to reverse 
-@-webkit-keyframes backgroundAnimate{
-
-  from{
-    background-position: 50px 0, 50px 0, 0 0, 0 0;
-  }
-  
-  to{
-    background-position: 50px -100px, 50px -100px, 0 -100px, 0 -100px;    
-  }
-  
-}*/
-
-
-
 
 
 /*Started CSS App*/

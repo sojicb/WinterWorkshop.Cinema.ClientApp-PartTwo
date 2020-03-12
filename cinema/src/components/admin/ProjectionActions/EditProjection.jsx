@@ -67,7 +67,6 @@ class EditProjection extends React.Component {
     }
 
     handleSubmit(e) {
-       //e.preventDefault();
 
         this.setState({ submitted: true });
         const { auditoriumId, projectionTime } = this.state;
@@ -81,29 +80,31 @@ class EditProjection extends React.Component {
 
     getAuditoriums() {
         const requestOptions = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
         };
-  
-        this.setState({isLoading: true});
+
+        this.setState({ isLoading: true });
         fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
-          .then(response => {
-            if (!response.ok) {
-              return Promise.reject(response);
-          }
-          return response.json();
-          })
-          .then(data => {
-            if (data) {
-              this.setState({ auditId: data.id, isLoading: false });
-              }
-          })
-          .catch(response => {
-              NotificationManager.error(response.message || response.statusText);
-              this.setState({ isLoading: false });
-          });
-      }
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ auditId: data.id, isLoading: false });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ isLoading: false });
+            });
+    }
 
     getProjection(id) {
 
@@ -200,20 +201,3 @@ class EditProjection extends React.Component {
 }
 
 export default withRouter(EditProjection);
-
-/*<FormGroup>
-<FormControl
-    labelKey="name"
-    options={auditId}
-    placeholder="Choose audit Id"
-    id="browser"
-    as="select"
-    id="auditoriumId"
-    value={auditId}
-    onChange={this.handleChange}>
-</FormControl>
-<FormText className="text-danger">{auditoriumIdError}</FormText>
-</FormGroup>
-
-<Button type="submit" disabled={submitted || !canSubmit} block>Edit Projection</Button>
-*/

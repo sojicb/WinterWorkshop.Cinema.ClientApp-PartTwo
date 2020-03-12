@@ -32,7 +32,6 @@ class ProjectionDetails extends Component {
     };
 
     this.getProjection = this.getProjection.bind(this);
-    //this.insertingReservation = this.insertingReservation.bind(this);
     this.getReservedSeats = this.getReservedSeats.bind(this);
     this.simulatingPayment = this.simulatingPayment.bind(this);
   }
@@ -90,7 +89,6 @@ class ProjectionDetails extends Component {
     if (!auditoriumId) {
       return;
     }
-    // TO DO: here you need to fetch movie with projection details using ID from router
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -239,15 +237,16 @@ class ProjectionDetails extends Component {
     console.log('all reserved seats: ', reservedSeats);
     const allSeatsWithReservations = [];
     seats.forEach(seat => {
-      if(reservedSeats.length > 0){
-      const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
-      if (isReserved) {
-        seat.seatColor = 'gray';
-        seat.isReserved = true;
-      } else {
-        seat.isReserved = false;
+      if (reservedSeats.length > 0) {
+        const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
+        if (isReserved) {
+          seat.seatColor = 'gray';
+          seat.isReserved = true;
+        } else {
+          seat.isReserved = false;
+        }
+        allSeatsWithReservations.push(seat);
       }
-      allSeatsWithReservations.push(seat);}
     });
     return seats;
   }
@@ -382,7 +381,7 @@ class ProjectionDetails extends Component {
                     className="mr-1 mb-2"
                     icon={faShoppingCart}
                   >
-                    <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faShoppingCart}/>Reserve seat/s
+                    <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faShoppingCart} />Reserve seat/s
         </Button>
                 </Row>
               </Card.Body>

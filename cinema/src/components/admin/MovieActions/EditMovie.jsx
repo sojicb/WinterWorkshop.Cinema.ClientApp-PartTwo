@@ -25,7 +25,7 @@ class EditMovie extends React.Component {
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params; 
+        const { id } = this.props.match.params;
         this.getMovie(id);
     }
 
@@ -38,22 +38,30 @@ class EditMovie extends React.Component {
     validate(id, value) {
         if (id === 'title') {
             if (value === '') {
-                this.setState({titleError: 'Fill in movie title', 
-                                canSubmit: false});
+                this.setState({
+                    titleError: 'Fill in movie title',
+                    canSubmit: false
+                });
             } else {
-                this.setState({titleError: '',
-                                canSubmit: true});
+                this.setState({
+                    titleError: '',
+                    canSubmit: true
+                });
             }
         }
-        
-        if(id === 'year') {
+
+        if (id === 'year') {
             const yearNum = +value;
-            if(!value || value === '' || (yearNum<1895 || yearNum>2100)){
-                this.setState({yearError: 'Please chose valid year',
-                                canSubmit: false});
+            if (!value || value === '' || (yearNum < 1895 || yearNum > 2100)) {
+                this.setState({
+                    yearError: 'Please chose valid year',
+                    canSubmit: false
+                });
             } else {
-                this.setState({yearError: '',
-                                canSubmit: true});
+                this.setState({
+                    yearError: '',
+                    canSubmit: true
+                });
             }
         }
     }
@@ -72,37 +80,41 @@ class EditMovie extends React.Component {
     }
 
     handleYearChange(year) {
-        this.setState({year: year});
+        this.setState({ year: year });
         this.validate('year', year);
     }
 
     getMovie(movieId) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
-        .then(response => {
-        if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({title: data.title,
-                               year: data.year,
-                               rating: Math.round(data.rating) + '',
-                               current: data.current + '',
-                               id: data.id});
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        title: data.title,
+                        year: data.year,
+                        rating: Math.round(data.rating) + '',
+                        current: data.current + '',
+                        id: data.id
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     updateMovie() {
@@ -117,8 +129,10 @@ class EditMovie extends React.Component {
 
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 
@@ -192,8 +206,8 @@ class EditMovie extends React.Component {
                             </FormGroup>
                             <FormGroup>
                                 <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.handleChange}>
-                                <option value="true">Current</option>
-                                <option value="false">Not Current</option>
+                                    <option value="true">Current</option>
+                                    <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
                             <Button type="submit" disabled={submitted || !canSubmit} block>Edit Movie</Button>
