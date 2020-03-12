@@ -93,7 +93,7 @@ class ShowAllCinemas extends Component {
     render() {
         const {isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="dark">
                             <thead>
                             <tr>
                                 <th>Id</th>

@@ -233,7 +233,7 @@ class ShowAllMovies extends Component {
     render() {
         const {tags, tagIdError, isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="dark">
                             <thead>
                             <tr>                                
                                 <th>Title</th>

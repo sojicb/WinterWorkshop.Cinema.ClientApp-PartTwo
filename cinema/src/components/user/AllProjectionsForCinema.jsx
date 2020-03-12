@@ -94,6 +94,7 @@ class AllProjectionsForCinema extends Component {
       })
   }
 
+  
     render() {
       
       const { isLoading } = this.state;
