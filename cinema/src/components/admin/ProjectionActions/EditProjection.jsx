@@ -3,27 +3,30 @@ import { withRouter } from 'react-router-dom';
 import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
+import DateTimePicker from 'react-datetime-picker';
 
 class EditProjection extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
+            auditId: '',
+            movieId: '',
             id: '',
             auditoriumId: '',
             projectionTime: '',
-            titleError: '',
+            movieIdError: '',
             auditoriumIdError: '',
             projectionTimeError: '',
             submitted: false,
-            canSubmit: true
+            canSubmit: true,
+            currentTime: new Date()
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params; 
+        const { id } = this.props.match.params;
         this.getProjection(id);
     }
 
@@ -34,39 +37,36 @@ class EditProjection extends React.Component {
     }
 
     validate(id, value) {
-        if (id === 'title') {
-            if (value === '') {
-                this.setState({titleError: 'Fill in movie title', 
-                                canSubmit: false});
+        if (id === 'auditoriumId') {
+            if (!value) {
+                this.setState({
+                    auditoriumIdError: 'Please choose auditorium from dropdown',
+                    canSubmit: false
+                });
             } else {
-                this.setState({titleError: '',
-                                canSubmit: true});
-            }
-        }
-        
-        if(id === 'auditoriumId') {
-            if(!value){
-                this.setState({auditoriumIdError: 'Please chose auditorium from dropdown',
-                                canSubmit: false});
-            } else {
-                this.setState({auditoriumIdError: '',
-                                canSubmit: true});
+                this.setState({
+                    auditoriumIdError: '',
+                    canSubmit: true
+                });
             }
         }
 
         if (id === 'projectionTime') {
             if (!value) {
-                this.setState({projectionTimeError: 'Chose projection time',
-                                canSubmit: false});
+                this.setState({
+                    projectionTimeError: 'Please choose projection time',
+                    canSubmit: false
+                });
             } else {
-                this.setState({projectionTimeError: '',
-                                canSubmit: true});
+                this.setState({
+                    projectionTimeError: '',
+                    canSubmit: true
+                });
             }
         }
     }
 
     handleSubmit(e) {
-        e.preventDefault();
 
         this.setState({ submitted: true });
         const { auditoriumId, projectionTime } = this.state;
@@ -78,35 +78,70 @@ class EditProjection extends React.Component {
         }
     }
 
-    getProjection(id) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/projections/get/${id}`, requestOptions)
-        .then(response => {
-        if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({auditoriumId: data.auditoriumId, 
-                               projectionTime: data.projectionTime,
-                               id: data.id});
+    getAuditoriums() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ auditId: data.id, isLoading: false });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ isLoading: false });
+            });
+    }
+
+    getProjection(id) {
+
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+        fetch(`${serviceConfig.baseURL}/api/projections/get/${id}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        auditoriumId: data.auditoriumId,
+                        projectionTime: data.projectionTime,
+                        id: data.id
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     updateProjection() {
-        const { auditoriumId, projectionTime, id } = this.state;
+        const { id, auditoriumId, projectionTime } = this.state;
+        console.log("ID IS!!!!: " + id);
+        console.log("AUDI ID IS!!!!: " + auditoriumId);
+        console.log("PROJECTION TIME!!!!: " + projectionTime);
 
         const data = {
             AuditoriumId: auditoriumId,
@@ -115,12 +150,13 @@ class EditProjection extends React.Component {
 
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
-
-        fetch(`${serviceConfig.baseURL}/api/projections/get/${id}`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/projections/update/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -137,8 +173,9 @@ class EditProjection extends React.Component {
             });
     }
 
+
     render() {
-        const { auditoriumId, projectionTime, submitted, titleError, canSubmit } = this.state;
+        const { auditoriumId, auditId, projectionTime, currentTime, submitted, auditoriumIdError, canSubmit, projectionTimeError } = this.state;
         return (
             <Container>
                 <Row>
@@ -146,24 +183,15 @@ class EditProjection extends React.Component {
                         <h1 className="form-header">Edit Existing Projection</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
-                                <FormControl 
-                                as="select" 
-                                placeholder="Auditorium Id" 
-                                id="auditoriumId" 
-                                value={auditoriumId} 
-                                onChange={this.handleChange}>
-                                </FormControl>
+                                <DateTimePicker
+                                    className="form-control"
+                                    id="projectionTime"
+                                    onChange={e => this.handleSubmit(e)}
+                                    value={currentTime}
+                                />
+                                <FormText className="text-danger">{projectionTimeError}</FormText>
                             </FormGroup>
-                            <FormGroup>
-                                <FormControl 
-                                as="select" 
-                                placeholder="Projection Time" 
-                                id="projectionTime" 
-                                value={projectionTime} 
-                                onChange={this.handleChange}>
-                                </FormControl>
-                            </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Projection</Button>
+
                         </form>
                     </Col>
                 </Row>

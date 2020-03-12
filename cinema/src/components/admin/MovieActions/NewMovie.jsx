@@ -21,7 +21,7 @@ class NewMovie extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleYearChange = this.handleYearChange.bind(this);
     }
-    
+
     handleChange(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
@@ -31,20 +31,24 @@ class NewMovie extends React.Component {
     validate(id, value) {
         if (id === 'title') {
             if (value === '') {
-                this.setState({titleError: 'Fill in movie title',
-                                canSubmit: false});
+                this.setState({
+                    titleError: 'Fill in movie title',
+                    canSubmit: false
+                });
             } else {
-                this.setState({titleError: '',
-                                canSubmit: true});
+                this.setState({
+                    titleError: '',
+                    canSubmit: true
+                });
             }
         }
 
-        if(id === 'year') {
+        if (id === 'year') {
             const yearNum = +value;
-            if(!value || value === '' || (yearNum<1895 || yearNum>2100)){
-                this.setState({yearError: 'Please chose valid year'});
+            if (!value || value === '' || (yearNum < 1895 || yearNum > 2100)) {
+                this.setState({ yearError: 'Please chose valid year' });
             } else {
-                this.setState({yearError: ''});
+                this.setState({ yearError: '' });
             }
         }
     }
@@ -63,7 +67,7 @@ class NewMovie extends React.Component {
     }
 
     handleYearChange(year) {
-        this.setState({year: year});
+        this.setState({ year: year });
         this.validate('year', year);
     }
 
@@ -79,8 +83,10 @@ class NewMovie extends React.Component {
 
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 
@@ -154,8 +160,8 @@ class NewMovie extends React.Component {
                             </FormGroup>
                             <FormGroup>
                                 <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.handleChange}>
-                                <option value="true">Current</option>
-                                <option value="false">Not Current</option>
+                                    <option value="true">Current</option>
+                                    <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
                             <Button type="submit" disabled={submitted || !canSubmit} block>Add Movie</Button>

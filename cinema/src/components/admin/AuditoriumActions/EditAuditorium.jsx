@@ -20,7 +20,7 @@ class EditAuditorium extends React.Component {
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params; 
+        const { id } = this.props.match.params;
         this.getAuditorium(id);
     }
 
@@ -33,11 +33,15 @@ class EditAuditorium extends React.Component {
     validate(id, value) {
         if (id === 'name') {
             if (value === '') {
-                this.setState({nameError: 'Fill in Auditorium name', 
-                                canSubmit: false});
+                this.setState({
+                    nameError: 'Fill in Auditorium name',
+                    canSubmit: false
+                });
             } else {
-                this.setState({nameError: '',
-                                canSubmit: true});
+                this.setState({
+                    nameError: '',
+                    canSubmit: true
+                });
             }
         }
     }
@@ -57,30 +61,33 @@ class EditAuditorium extends React.Component {
 
 
     getAuditorium(auditoriumId) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/Auditoriums/get/${auditoriumId}`, requestOptions)
-        .then(response => {
-        if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({
-                    id: data.id,
-                    name: data.name});
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/get/${auditoriumId}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        id: data.id,
+                        name: data.name
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     updateAuditorium() {
@@ -92,8 +99,10 @@ class EditAuditorium extends React.Component {
 
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 

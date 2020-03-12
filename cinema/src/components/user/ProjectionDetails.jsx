@@ -3,7 +3,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair, faCouch, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
+import { faChair, faCouch, faAlignCenter, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 
 class ProjectionDetails extends Component {
@@ -32,7 +32,6 @@ class ProjectionDetails extends Component {
     };
 
     this.getProjection = this.getProjection.bind(this);
-    //this.insertingReservation = this.insertingReservation.bind(this);
     this.getReservedSeats = this.getReservedSeats.bind(this);
     this.simulatingPayment = this.simulatingPayment.bind(this);
   }
@@ -90,7 +89,6 @@ class ProjectionDetails extends Component {
     if (!auditoriumId) {
       return;
     }
-    // TO DO: here you need to fetch movie with projection details using ID from router
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -239,16 +237,18 @@ class ProjectionDetails extends Component {
     console.log('all reserved seats: ', reservedSeats);
     const allSeatsWithReservations = [];
     seats.forEach(seat => {
-      const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
-      if (isReserved) {
-        seat.seatColor = 'gray';
-        seat.isReserved = true;
-      } else {
-        seat.isReserved = false;
+      if (reservedSeats.length > 0) {
+        const isReserved = reservedSeats.some(reserved => reserved.id === seat.id);
+        if (isReserved) {
+          seat.seatColor = 'gray';
+          seat.isReserved = true;
+        } else {
+          seat.isReserved = false;
+        }
+        allSeatsWithReservations.push(seat);
       }
-      allSeatsWithReservations.push(seat);
     });
-    return allSeatsWithReservations;
+    return seats;
   }
 
   simulatingPayment() {
@@ -375,13 +375,13 @@ class ProjectionDetails extends Component {
                   Price for reserved seats: {ticketPrice} RSD
         </Row>
                 <Row className="justify-content-center font-weight-bold">
-
                   <Button
                     type="submit"
                     onClick={() => this.simulatingPayment()}
                     className="mr-1 mb-2"
+                    icon={faShoppingCart}
                   >
-                    Reserve seat/s
+                    <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faShoppingCart} />Reserve seat/s
         </Button>
                 </Row>
               </Card.Body>

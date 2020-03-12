@@ -8,78 +8,82 @@ import Spinner from '../../Spinner';
 
 class ShowAllAuditoriums extends Component {
     constructor(props) {
-      super(props);
-      this.state = { auditoriums: [], isLoading: true };
-      this.editAuditorium = this.editAuditorium.bind(this);
-      this.removeAuditorium = this.removeAuditorium.bind(this);
+        super(props);
+        this.state = { auditoriums: [], isLoading: true };
+        this.editAuditorium = this.editAuditorium.bind(this);
+        this.removeAuditorium = this.removeAuditorium.bind(this);
     }
 
     componentDidMount() {
-      this.getAuditoriums();
+        this.getAuditoriums();
     }
 
     getAuditoriums() {
-      const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-      };
-
-      this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
-        .then(response => {
-          if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-          if (data) {
-            this.setState({ auditoriums: data, isLoading: false });
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ isLoading: false });
-        });
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ auditoriums: data, isLoading: false });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ isLoading: false });
+            });
     }
 
     removeAuditorium(id) {
-      const requestOptions = {
-        method: 'DELETE',
-        headers: {'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                return Promise.reject(response);
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-            return response.statusText;
-        })
-        .then(result => {
-            NotificationManager.success('Successfuly removed auditorium with id:', id);
-            const newState = this.state.auditoriums.filter(auditorium => {
-                return auditorium.id !== id;
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.statusText;
             })
-            this.setState({auditoriums: newState});
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+            .then(result => {
+                NotificationManager.success('Successfuly removed auditorium with id:', id);
+                const newState = this.state.auditoriums.filter(auditorium => {
+                    return auditorium.id !== id;
+                })
+                this.setState({ auditoriums: newState });
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     fillTableWithDaata() {
         return this.state.auditoriums.map(auditorium => {
             return <tr key={auditorium.id}>
-                        <td width="30%">{auditorium.id}</td>
-                        <td width="30%">{auditorium.cinemaId}</td>
-                        <td width="30%">{auditorium.name}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeAuditorium(auditorium.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
-                    </tr>
+                <td width="30%">{auditorium.id}</td>
+                <td width="30%">{auditorium.cinemaId}</td>
+                <td width="30%">{auditorium.name}</td>
+                <td width="5%" className="text-center cursor-pointer" onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit} /></td>
+                <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeAuditorium(auditorium.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
+            </tr>
         })
     }
 
@@ -88,23 +92,25 @@ class ShowAllAuditoriums extends Component {
         this.props.history.push(`editAuditorium/${id}`);
     }
 
+
+
     render() {
-        const {isLoading} = this.state;
+        const { isLoading } = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="">
-                            <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Cinema Id</th>
-                                <th>Name</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {rowsData}
-                            </tbody>
-                        </Table>);
+        const table = (<Table striped bordered hover size="bg" data-colors='red,green,blue' variant="dark">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Cinema Id</th>
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {rowsData}
+            </tbody>
+        </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
             <React.Fragment>
@@ -116,7 +122,7 @@ class ShowAllAuditoriums extends Component {
                 </Row>
             </React.Fragment>
         );
-      }
+    }
 }
 
 export default ShowAllAuditoriums;
