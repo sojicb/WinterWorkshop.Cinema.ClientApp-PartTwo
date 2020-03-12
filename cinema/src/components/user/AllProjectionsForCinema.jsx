@@ -4,6 +4,8 @@ import { serviceConfig } from '../../appSettings';
 import { withRouter } from 'react-router-dom';
 import { Row, Card, Button, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTape, faFilm } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -64,6 +66,7 @@ class AllProjectionsForCinema extends Component {
                 onClick={() => this.navigateToProjectionDetails(projection.id)} 
                 className="mr-1 mb-2"
               >
+                <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faFilm}/>
                 {projection.projectionTime}
         </Button>
         });

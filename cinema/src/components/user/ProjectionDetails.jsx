@@ -3,7 +3,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChair, faCouch, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
+import { faChair, faCouch, faAlignCenter, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 
 class ProjectionDetails extends Component {
@@ -376,13 +376,13 @@ class ProjectionDetails extends Component {
                   Price for reserved seats: {ticketPrice} RSD
         </Row>
                 <Row className="justify-content-center font-weight-bold">
-
                   <Button
                     type="submit"
                     onClick={() => this.simulatingPayment()}
                     className="mr-1 mb-2"
+                    icon={faShoppingCart}
                   >
-                    Reserve seat/s
+                    <FontAwesomeIcon className="text-black mr-2 fa-1x" icon={faShoppingCart}/>Reserve seat/s
         </Button>
                 </Row>
               </Card.Body>
