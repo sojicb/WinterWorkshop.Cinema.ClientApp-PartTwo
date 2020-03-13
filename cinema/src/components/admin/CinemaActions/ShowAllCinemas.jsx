@@ -73,7 +73,7 @@ class ShowAllCinemas extends Component {
                 this.setState({ cinemas: newState });
             })
             .catch(response => {
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error('Cinema cannot be deleted. It has projections in future.');
                 this.setState({ submitted: false });
             });
     }
