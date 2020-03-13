@@ -133,6 +133,7 @@ class EditCinema extends React.Component {
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
+                                    className = "editCinema"
                                     id="name"
                                     type="text"
                                     placeholder="Cinema Name"
@@ -141,7 +142,7 @@ class EditCinema extends React.Component {
                                 />
                                 <FormText className="text-danger">{nameError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Cinema</Button>
+                            <Button className = "editCinema" type="submit" disabled={submitted || !canSubmit} block>Edit Cinema</Button>
                         </form>
                     </Col>
                 </Row>
