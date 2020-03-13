@@ -4,7 +4,7 @@ import { Navbar, Nav, Form, FormControl, Button } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamation, faVideo, faChartLine, faCheck, faFingerprint } from '@fortawesome/free-solid-svg-icons';
+import { faExclamation, faVideo, faChartLine, faFingerprint } from '@fortawesome/free-solid-svg-icons';
 
 
 class Header extends Component {
@@ -12,11 +12,14 @@ class Header extends Component {
     super(props);
     this.state = {
       username: '',
-      submitted: false
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+      user: [],
+      submitted: false,
+      canLogIn: false
+  };
+  this.handleChange = this.handleChange.bind(this);
+  this.handleSubmit = this.handleSubmit.bind(this);
+  this.getUser = this.getUser.bind(this);
+}
 
   handleChange(e) {
     const { id, value } = e.target;
@@ -25,14 +28,43 @@ class Header extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    this.getUser();
 
     this.setState({ submitted: true });
-    const { username } = this.state;
-    if (username) {
-      this.login();
+    const { username, canLogIn } = this.state;
+    if (canLogIn) {
     } else {
       this.setState({ submitted: false });
     }
+  }
+
+  getUser() {
+    const { username, user, canLogIn } = this.state;
+  
+    console.log(username);
+    const requestOptions = {
+      method: 'GET'
+    };
+  
+    fetch(`${serviceConfig.baseURL}/api/Users/byusername/${username}`, requestOptions)
+      .then(response => {
+         if (!response.ok) {
+           return Promise.reject(response);
+      }
+       return response.json();
+      })
+       .then(data => {
+         if(data) {
+           this.login();
+          this.setState({ user: data.username, canLogIn: true });
+         }
+      })
+       .catch(response => {
+          NotificationManager.error("No such user");
+          this.setState({ submitted: false, canLogIn: false});
+      });
+  
+          
   }
 
   login() {
